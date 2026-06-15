@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Science Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f1ea;
+  --surface: #fdfcf8;
+  --surface2: #ede9e0;
+  --border: #ddd8ce;
+  --text: #1c1a16;
+  --text2: #5c5850;
+  --text3: #9c9890;
+  --life: #1a5c3a;
+  --life-light: #e6f2ec;
+  --life-mid: #4a9c72;
+  --phys: #1e3d6e;
+  --phys-light: #e6ecf6;
+  --phys-mid: #4a72b8;
+  --earth: #6b3d12;
+  --earth-light: #f5ece0;
+  --earth-mid: #b87a3a;
+  --tag-bg: #f0ede4;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2.5rem 1rem 5rem;
+}
+
+.container { max-width: 720px; margin: 0 auto; }
+
+header { text-align: center; margin-bottom: 2.5rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 7vw, 3.2rem); font-weight: 400; line-height: 1.1; margin-bottom: 12px; }
+header h1 em { font-style: italic; }
+.header-meta { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.meta-pill { font-size: 12px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: 5px 14px; }
+
+.tab-bar { display: flex; gap: 6px; margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 5px; }
+.tab { flex: 1; padding: 10px 8px; border-radius: calc(var(--radius-lg) - 4px); border: none; background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text2); transition: all 0.18s; text-align: center; }
+.tab.life.active { background: var(--life); color: #fff; }
+.tab.phys.active { background: var(--phys); color: #fff; }
+.tab.earth.active { background: var(--earth); color: #fff; }
+.tab:not(.active):hover { background: var(--surface2); }
+
+.section { display: none; animation: fadeUp 0.22s ease; }
+.section.visible { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.section-intro { display: flex; align-items: flex-start; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+.section-pct { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 400; line-height: 1; flex-shrink: 0; }
+.life .section-pct { color: var(--life); }
+.phys .section-pct { color: var(--phys); }
+.earth .section-pct { color: var(--earth); }
+.section-intro-text h2 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; margin-bottom: 5px; }
+.section-intro-text p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+
+.topic-block { margin-bottom: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
+.topic-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; gap: 10px; }
+.topic-header:hover { background: var(--surface2); }
+.topic-title { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 10px; flex: 1; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.life .topic-dot { background: var(--life-mid); }
+.phys .topic-dot { background: var(--phys-mid); }
+.earth .topic-dot { background: var(--earth-mid); }
+.chevron { font-size: 16px; color: var(--text3); transition: transform 0.2s; flex-shrink: 0; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+
+.topic-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
+.topic-block.open .topic-body { display: block; }
+
+.concepts { margin: 12px 0; }
+.concepts-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--tag-bg); color: var(--text2); border: 1px solid var(--border); }
+
+.videos-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin: 14px 0 8px; }
+.video-links { display: flex; flex-direction: column; gap: 7px; }
+.video-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 13px; transition: all 0.14s; background: var(--bg); }
+.video-link:hover { border-color: var(--text3); background: var(--surface2); }
+.vbadge { font-size: 10px; padding: 3px 8px; border-radius: 99px; font-weight: 500; flex-shrink: 0; }
+.vbadge.ka { background: var(--life-light); color: var(--life); }
+.vbadge.yt { background: #fff0f0; color: #c0392b; }
+.vbadge.kap { background: var(--phys-light); color: var(--phys); }
+.vlink-text { flex: 1; line-height: 1.4; }
+.vlink-arrow { color: var(--text3); font-size: 14px; }
+
+.tip-box { margin-top: 14px; background: var(--surface2); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; border-left: 3px solid var(--border); }
+.tip-box strong { font-weight: 500; color: var(--text); }
+
+.skills-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-top: 2rem; }
+.skills-card h3 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 400; margin-bottom: 1rem; }
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; }
+.skill-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
+.skill-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.skill-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text3); }
+footer a { color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <p class="eyebrow">Study Guide</p>
+    <h1>HiSET <em>Science</em> Test</h1>
+    <div class="header-meta">
+      <span class="meta-pill">50 questions</span>
+      <span class="meta-pill">80 minutes</span>
+      <span class="meta-pill">Passing score: 8 / 20</span>
+    </div>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab life active" onclick="showTab('life', this)">🌿 Life Science · 50%</button>
+    <button class="tab phys" onclick="showTab('phys', this)">⚡ Physical Science · 29%</button>
+    <button class="tab earth" onclick="showTab('earth', this)">🌍 Earth Science · 21%</button>
+  </div>
+
+  <!-- ===== LIFE SCIENCE ===== -->
+  <div id="life" class="section life visible">
+    <div class="section-intro">
+      <div class="section-pct">50%</div>
+      <div class="section-intro-text">
+        <h2>Life Science</h2>
+        <p>The largest section — roughly 25 questions. Covers cells, body systems, genetics, evolution, and ecosystems. Biology is the heart of the HiSET Science test.</p>
+      </div>
+    </div>
+
+    <!-- Topic 1 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Cells — structure & function</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Cell membrane</span><span class="tag">Nucleus / DNA</span><span class="tag">Mitochondria</span><span class="tag">Vacuole</span><span class="tag">Lysosome</span><span class="tag">Prokaryote vs eukaryote</span><span class="tag">Cell division / mitosis</span><span class="tag">Plant vs animal cells</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/structure-of-a-cell" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Introduction to cells — structure & organelles</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=URUJD5NEXC8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Cells — CrashCourse Biology #6</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/cell-division" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Mitosis & cell division</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the function of each organelle, not just its name. Questions often describe a process (e.g. "produces energy") and ask you to identify the organelle.</div>
+      </div>
+    </div>
+
+    <!-- Topic 2 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Human body systems</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Digestive system</span><span class="tag">Circulatory system</span><span class="tag">Respiratory system</span><span class="tag">Nervous system</span><span class="tag">Muscular & skeletal</span><span class="tag">Immune system</span><span class="tag">Endocrine system</span><span class="tag">Homeostasis</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/health-and-medicine/human-anatomy-and-physiology" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Human anatomy & physiology — all body systems</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=Ae4MadKPJC0" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Circulatory & respiratory systems — CrashCourse</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=qPix_X-9t7E" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Digestive system — CrashCourse Biology</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Focus on how systems work <em>together</em> — e.g., how the circulatory and respiratory systems exchange oxygen and carbon dioxide.</div>
+      </div>
+    </div>
+
+    <!-- Topic 3 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Genetics & heredity</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">DNA & RNA</span><span class="tag">Genes & alleles</span><span class="tag">Dominant vs recessive</span><span class="tag">Punnett squares</span><span class="tag">Genotype vs phenotype</span><span class="tag">Mutations</span><span class="tag">Meiosis</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/classical-genetics" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Classical genetics — Mendel, Punnett squares, traits</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/gene-expression-central-dogma" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">DNA, RNA & protein synthesis</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=CBezq1fFUEA" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Heredity — CrashCourse Biology #9</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Practice Punnett squares for dominant/recessive crosses. The HiSET often shows a diagram and asks you to predict the probability of a trait.</div>
+      </div>
+    </div>
+
+    <!-- Topic 4 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Evolution & natural selection</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Natural selection</span><span class="tag">Adaptation</span><span class="tag">Variation in populations</span><span class="tag">Fossil record</span><span class="tag">Common ancestry</span><span class="tag">Speciation</span><span class="tag">Darwin's theory</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/her-biology/evolution-and-natural-selection/a/darwin-evolution-natural-selection" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Natural selection & Darwin's theory</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=GcjgWov7mTM" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Natural selection — CrashCourse Biology #14</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic 5 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Ecosystems & interdependence</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Food chains & webs</span><span class="tag">Producers, consumers, decomposers</span><span class="tag">Energy flow</span><span class="tag">Symbiosis</span><span class="tag">Mutualism / parasitism / commensalism</span><span class="tag">Biomes</span><span class="tag">Population dynamics</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/biology/ecology" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Ecology — ecosystems, food webs, energy flow</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=LkSRZZqImA8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Ecological relationships — CrashCourse Ecology</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> The HiSET loves symbiosis questions. Know the difference: mutualism (both benefit), commensalism (one benefits, one unaffected), parasitism (one benefits, one harmed).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PHYSICAL SCIENCE ===== -->
+  <div id="phys" class="section phys">
+    <div class="section-intro">
+      <div class="section-pct">29%</div>
+      <div class="section-intro-text">
+        <h2>Physical Science</h2>
+        <p>Roughly 14–15 questions. Covers chemistry basics (matter, reactions) and physics (forces, motion, energy, waves). No advanced math required — focus on concepts and reading graphs.</p>
+      </div>
+    </div>
+
+    <!-- Topic 1 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Properties of matter</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Physical vs chemical properties</span><span class="tag">States of matter</span><span class="tag">Density, mass, volume</span><span class="tag">Mixtures vs pure substances</span><span class="tag">Elements, compounds, molecules</span><span class="tag">Atoms & periodic table basics</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/chemistry/atomic-structure-and-properties" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Atoms, elements & the periodic table</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=IVqgTMgVRoE" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">States of matter — CrashCourse Chemistry</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic 2 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Chemical reactions</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Reactants & products</span><span class="tag">Conservation of mass</span><span class="tag">Acids & bases / pH</span><span class="tag">Endothermic vs exothermic</span><span class="tag">Signs of a chemical reaction</span><span class="tag">Chemical vs physical change</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/chemistry/chemical-reactions-stoichiome" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Chemical reactions — balancing, types, energy</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.khanacademy.org/science/chemistry/acids-and-bases-topic" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Acids, bases & pH</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=nBmSB8m3NbA" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Chemical reactions — CrashCourse Chemistry #11</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> You don't need to balance equations mathematically. Do know that mass is conserved — the same atoms exist before and after a reaction.</div>
+      </div>
+    </div>
+
+    <!-- Topic 3 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Forces & motion</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Newton's 3 laws</span><span class="tag">Speed, velocity, acceleration</span><span class="tag">Gravity</span><span class="tag">Friction</span><span class="tag">Balanced vs unbalanced forces</span><span class="tag">Reading motion graphs</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/physics/forces-newtons-laws" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Forces & Newton's laws of motion</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=kKKM8Y-u7ds" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Newton's laws — CrashCourse Physics #5</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Newton's 3rd law (action-reaction) is frequently tested. Know that every force has an equal and opposite force — but they act on <em>different</em> objects.</div>
+      </div>
+    </div>
+
+    <!-- Topic 4 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Energy forms & transfer</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Kinetic vs potential energy</span><span class="tag">Conservation of energy</span><span class="tag">Heat transfer (conduction, convection, radiation)</span><span class="tag">Electricity basics</span><span class="tag">Light & electromagnetic spectrum</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/physics/work-and-energy" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Work, energy & power</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=pNefnq6s7Ek" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Heat transfer — conduction, convection & radiation</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=BJGp6Wm7xEU" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Electromagnetic spectrum explained</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic 5 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Waves, sound & light</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Wavelength & frequency</span><span class="tag">Transverse vs longitudinal waves</span><span class="tag">Reflection & refraction</span><span class="tag">Sound waves</span><span class="tag">Visible light & color</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/physics/mechanical-waves-and-sound" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Mechanical waves & sound</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=BNBl81RRMd0" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Waves — CrashCourse Physics #15</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== EARTH SCIENCE ===== -->
+  <div id="earth" class="section earth">
+    <div class="section-intro">
+      <div class="section-pct">21%</div>
+      <div class="section-intro-text">
+        <h2>Earth Science</h2>
+        <p>Roughly 10–11 questions. Covers geology, the water & rock cycles, weather & climate, and Earth's place in the solar system. Good area to gain quick points!</p>
+      </div>
+    </div>
+
+    <!-- Topic 1 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Earth's structure & plate tectonics</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Crust, mantle, core</span><span class="tag">Tectonic plates</span><span class="tag">Earthquakes & volcanoes</span><span class="tag">Mountain formation</span><span class="tag">Continental drift</span><span class="tag">Seismic waves</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/earth-and-space-science/plate-tectonics" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Plate tectonics — Earth's structure & movement</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=kwfNGatxUJI" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Plate tectonics explained — CrashCourse Geography</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the three types of plate boundaries: convergent (collide → mountains/volcanoes), divergent (pull apart → ridges), and transform (slide past → earthquakes).</div>
+      </div>
+    </div>
+
+    <!-- Topic 2 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Rocks, minerals & geologic cycles</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Rock cycle</span><span class="tag">Igneous, sedimentary, metamorphic</span><span class="tag">Mineral properties</span><span class="tag">Erosion & weathering</span><span class="tag">Geologic time scale</span><span class="tag">Fossils</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/earth-and-space-science/rocks-and-minerals" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Rocks, minerals & the rock cycle</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=nZzaGACFLRI" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">The rock cycle — Amoeba Sisters</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Topic 3 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Water cycle & weather</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Evaporation, condensation, precipitation</span><span class="tag">Transpiration</span><span class="tag">Weather vs climate</span><span class="tag">Fronts & pressure systems</span><span class="tag">Clouds & precipitation types</span><span class="tag">Greenhouse effect</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/earth-and-space-science/earth-water-and-atmosphere" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Earth's atmosphere, water cycle & weather</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=l7La4KSntRs" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">The water cycle — CrashCourse Kids</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=oHPplmQZG0U" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Greenhouse effect & climate change explained</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> The HiSET often asks about the greenhouse effect and human impact on climate. Know that CO₂ and methane trap heat in the atmosphere.</div>
+      </div>
+    </div>
+
+    <!-- Topic 4 -->
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Earth in the solar system</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts">
+          <div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Earth's rotation & revolution</span><span class="tag">Seasons</span><span class="tag">Moon phases & tides</span><span class="tag">Solar & lunar eclipses</span><span class="tag">Solar system structure</span><span class="tag">Stars & the sun</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/science/earth-and-space-science/solar-system" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Solar system, Earth's movements & moon phases</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=vNCTkDPMTzo" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Seasons & Earth's tilt — CrashCourse Astronomy</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=cxrLRbkOwKs" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Moon phases explained simply</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TEST SKILLS CARD -->
+  <div class="skills-card">
+    <h3>Science reasoning skills the test also measures</h3>
+    <div class="skills-grid">
+      <div class="skill-item"><div class="skill-name">Reading graphs & charts</div><div class="skill-desc">Interpret data tables, bar graphs, and line graphs presented in questions</div></div>
+      <div class="skill-item"><div class="skill-name">Scientific inquiry</div><div class="skill-desc">Identify hypotheses, variables, and conclusions in experiment descriptions</div></div>
+      <div class="skill-item"><div class="skill-name">Cause & effect</div><div class="skill-desc">Determine what would happen if a variable or condition changed</div></div>
+      <div class="skill-item"><div class="skill-name">Drawing conclusions</div><div class="skill-desc">Choose the claim best supported by given data or a passage</div></div>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  HiSET Science Study Guide &nbsp;·&nbsp; All video links open free resources on Khan Academy or YouTube &nbsp;·&nbsp; Powered by Claude
+</footer>
+
+<script>
+function toggle(block) {
+  block.classList.toggle('open');
+}
+
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>

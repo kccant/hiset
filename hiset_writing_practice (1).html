@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Writing Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2eb;
+    --surface: #fffdf8;
+    --surface2: #f0ede4;
+    --border: #ddd8cc;
+    --border2: #ccc7ba;
+    --text: #1a1814;
+    --text2: #5a5650;
+    --text3: #9a948c;
+    --accent: #2d5a3d;
+    --accent-light: #e8f2eb;
+    --accent-text: #1a3d28;
+    --danger: #8b2e2e;
+    --danger-light: #f9e8e8;
+    --danger-text: #5c1c1c;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .header-eyebrow {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 6vw, 3rem);
+    font-weight: 400;
+    color: var(--text);
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+
+  .header h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .header-sub {
+    font-size: 14px;
+    color: var(--text2);
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .tab-bar {
+    display: flex;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 4px;
+    margin-bottom: 1.5rem;
+    gap: 4px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 9px 16px;
+    border-radius: calc(var(--radius-lg) - 4px);
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text2);
+    transition: all 0.18s;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .section { display: none; }
+  .section.visible { display: block; }
+
+  .score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .score-badge {
+    font-size: 13px;
+    color: var(--text3);
+  }
+
+  .progress-wrap {
+    height: 5px;
+    background: var(--surface2);
+    border-radius: 99px;
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 99px;
+    transition: width 0.35s ease;
+  }
+
+  .q-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    animation: fadeIn 0.2s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+  .q-meta {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  .passage {
+    background: var(--surface2);
+    border-left: 3px solid var(--border2);
+    padding: 12px 16px;
+    margin-bottom: 1rem;
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--text2);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    font-style: italic;
+  }
+
+  .q-text {
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    font-weight: 500;
+  }
+
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+
+  .choice-btn {
+    text-align: left;
+    padding: 11px 16px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    transition: all 0.12s;
+    line-height: 1.5;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    background: var(--surface2);
+    border-color: var(--border2);
+  }
+
+  .choice-btn.correct {
+    background: var(--accent-light);
+    border-color: var(--accent);
+    color: var(--accent-text);
+    font-weight: 500;
+  }
+
+  .choice-btn.wrong {
+    background: var(--danger-light);
+    border-color: var(--danger);
+    color: var(--danger-text);
+  }
+
+  .choice-btn:disabled { cursor: default; }
+
+  .feedback {
+    display: none;
+    margin-top: 12px;
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .feedback.show { display: block; animation: fadeIn 0.2s ease; }
+  .feedback.ok { background: var(--accent-light); color: var(--accent-text); border: 1px solid #b8d9c2; }
+  .feedback.no { background: var(--danger-light); color: var(--danger-text); border: 1px solid #e8b8b8; }
+
+  .action-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 9px 20px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--surface);
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+    transition: all 0.14s;
+  }
+
+  .btn:hover { background: var(--surface2); }
+  .btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .btn.primary:hover { background: var(--accent-text); border-color: var(--accent-text); }
+
+  .essay-prompt-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .prompt-label {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+  }
+
+  #prompt-text {
+    font-family: 'DM Serif Display', serif;
+    font-size: 17px;
+    line-height: 1.5;
+    color: var(--text);
+    margin-bottom: 10px;
+  }
+
+  .prompt-instruction {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .essay-textarea {
+    width: 100%;
+    min-height: 200px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--surface);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text);
+    resize: vertical;
+    transition: border-color 0.14s;
+  }
+
+  .essay-textarea:focus { outline: none; border-color: var(--accent); }
+  .essay-textarea::placeholder { color: var(--text3); }
+
+  .word-count {
+    font-size: 12px;
+    color: var(--text3);
+    text-align: right;
+    margin-top: 6px;
+    margin-bottom: 1rem;
+  }
+
+  .section-heading {
+    font-family: 'DM Serif Display', serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin: 1.75rem 0 0.75rem;
+    color: var(--text);
+  }
+
+  .rubric-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.5rem;
+  }
+
+  .rubric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+  }
+
+  .rubric-name {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent-text);
+    margin-bottom: 5px;
+  }
+
+  .rubric-desc {
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.5;
+  }
+
+  .tip-list {
+    list-style: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .tip-list li {
+    padding: 12px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text2);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 10px;
+  }
+
+  .tip-list li:last-child { border-bottom: none; }
+
+  .tip-arrow {
+    color: var(--accent);
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .feedback-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    margin-top: 1rem;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--text2);
+    white-space: pre-wrap;
+    display: none;
+  }
+
+  .feedback-box.show { display: block; animation: fadeIn 0.25s ease; }
+
+  .loading-dots span {
+    display: inline-block;
+    animation: blink 1.2s infinite;
+    font-size: 20px;
+    color: var(--accent);
+  }
+  .loading-dots span:nth-child(2) { animation-delay: 0.2s; }
+  .loading-dots span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: 0.2; } 40% { opacity: 1; } }
+
+  .final-score {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    text-align: center;
+  }
+
+  .final-score .big-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 3rem;
+    color: var(--accent);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .final-score .label { font-size: 14px; color: var(--text2); margin-bottom: 1rem; }
+
+  footer {
+    text-align: center;
+    margin-top: 3rem;
+    font-size: 12px;
+    color: var(--text3);
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <p class="header-eyebrow">Last-minute prep</p>
+    <h1>HiSET <em>Writing</em> Practice</h1>
+    <p class="header-sub">Multiple choice · Grammar · Essay — all in one place</p>
+  </div>
+
+  <div class="tab-bar">
+    <button class="tab-btn active" onclick="showTab('mc', this)">Part 1 – Multiple choice</button>
+    <button class="tab-btn" onclick="showTab('essay', this)">Part 2 – Essay</button>
+  </div>
+
+  <!-- PART 1 -->
+  <div id="mc" class="section visible">
+    <div class="score-row">
+      <span class="score-badge" id="score-badge">0 / 8 answered</span>
+      <span class="score-badge" id="correct-badge"></span>
+    </div>
+    <div class="progress-wrap"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+    <div id="q-container"></div>
+  </div>
+
+  <!-- PART 2 -->
+  <div id="essay" class="section">
+    <div class="essay-prompt-box">
+      <div class="prompt-label">Essay prompt</div>
+      <p id="prompt-text">Some people believe students should be required to learn a second language in school. Others believe this requirement is unnecessary.</p>
+      <p class="prompt-instruction">Write an essay presenting your position on this issue. Use specific reasons and examples to support your argument. You have 45 minutes on the real test.</p>
+    </div>
+
+    <textarea class="essay-textarea" id="essay-text" placeholder="Write your essay here — aim for 4–6 paragraphs..." oninput="updateWordCount()"></textarea>
+    <div class="word-count" id="word-count">0 words</div>
+
+    <div class="action-row">
+      <button class="btn primary" onclick="getAIFeedback()">Get AI feedback</button>
+      <button class="btn" onclick="newPrompt()">New prompt</button>
+      <button class="btn" onclick="clearEssay()">Clear</button>
+    </div>
+
+    <div class="feedback-box" id="ai-feedback"></div>
+
+    <div class="section-heading">Scoring rubric <span style="font-size:14px;color:var(--text3);font-family:'DM Sans',sans-serif;">(1–6 per category)</span></div>
+    <div class="rubric-grid">
+      <div class="rubric-card"><div class="rubric-name">Development</div><div class="rubric-desc">Clear position with well-developed, specific support</div></div>
+      <div class="rubric-card"><div class="rubric-name">Organization</div><div class="rubric-desc">Logical intro, body paragraphs, and conclusion</div></div>
+      <div class="rubric-card"><div class="rubric-name">Language use</div><div class="rubric-desc">Varied sentences, precise word choice</div></div>
+      <div class="rubric-card"><div class="rubric-name">Conventions</div><div class="rubric-desc">Grammar, punctuation, and spelling</div></div>
+    </div>
+
+    <div class="section-heading">Quick tips</div>
+    <ul class="tip-list">
+      <li><span class="tip-arrow">→</span> State your position clearly in the first paragraph — don't make the reader guess</li>
+      <li><span class="tip-arrow">→</span> Each body paragraph = one main reason + a specific example</li>
+      <li><span class="tip-arrow">→</span> Use transition words: <em>first, however, for example, therefore, in conclusion</em></li>
+      <li><span class="tip-arrow">→</span> Restate your position in the conclusion — don't introduce new ideas</li>
+      <li><span class="tip-arrow">→</span> Leave 3–4 minutes to proofread for run-ons, fragments, and spelling</li>
+    </ul>
+  </div>
+</div>
+
+<footer>HiSET Writing Practice &nbsp;·&nbsp; Powered by Claude</footer>
+
+<script>
+const questions = [
+  { category: "Grammar & usage", passage: "Each of the students in the advanced class (1) have submitted (2) their essays on time, which (3) pleases the teacher greatly.", question: "Which underlined word or phrase contains an error?", choices: ["(1) have submitted", "(2) their", "(3) pleases", "No error"], answer: 0, explanation: "\"Each\" is a singular subject, so it requires the singular verb \"has submitted,\" not \"have submitted.\" \"Their\" correctly refers to the students, and \"pleases\" correctly agrees with \"which.\"" },
+  { category: "Sentence structure", passage: null, question: "Which of the following is a run-on sentence?", choices: ["Running late, she skipped breakfast.", "The storm passed quickly the sun came out.", "Although it was cold, they went outside.", "He studied for hours and still felt nervous."], answer: 1, explanation: "\"The storm passed quickly the sun came out\" fuses two complete sentences with no conjunction or punctuation. It should read: \"The storm passed quickly, and the sun came out.\"" },
+  { category: "Punctuation & mechanics", passage: null, question: "Which sentence uses a comma correctly?", choices: ["She likes hiking, but, she hates camping.", "After the long hike, they sat down to rest.", "He wanted to go, but had no ride.", "The tall, dark, building stood on the corner."], answer: 1, explanation: "A comma is correctly placed after an introductory phrase (\"After the long hike\"). Option A has unnecessary commas around \"but.\" Option D incorrectly places a comma before the noun \"building.\"" },
+  { category: "Grammar & usage", passage: null, question: "Select the sentence with correct subject-verb agreement.", choices: ["Neither the manager nor the employees was informed.", "The team are playing well this season.", "Neither the manager nor the employees were informed.", "A number of students has passed the test."], answer: 2, explanation: "With \"neither…nor,\" the verb agrees with the nearest subject — \"employees\" (plural), so \"were\" is correct. \"The team\" takes a singular verb in American English. \"A number of\" takes a plural verb." },
+  { category: "Sentence structure", passage: "Wanting to impress her boss. Maria prepared extensively for the presentation.", question: "What is wrong with the first group of words?", choices: ["It is a run-on sentence", "It is a sentence fragment", "It has incorrect punctuation", "It has a dangling modifier"], answer: 1, explanation: "\"Wanting to impress her boss.\" is a fragment — no subject or main verb. It should be joined to the next sentence: \"Wanting to impress her boss, Maria prepared extensively.\"" },
+  { category: "Punctuation & mechanics", passage: null, question: "Which sentence correctly uses a semicolon?", choices: ["He was tired; but he kept working.", "She loves music; especially jazz and blues.", "The project is done; we can celebrate now.", "I need three things; milk, eggs, and bread."], answer: 2, explanation: "A semicolon correctly joins two independent clauses: \"The project is done\" and \"we can celebrate now.\" Semicolons should not come before coordinating conjunctions like \"but,\" before dependent phrases, or before a list (use a colon)." },
+  { category: "Grammar & usage", passage: "The committee has made their decision, and they plan to announce it tomorrow.", question: "What revision would improve this sentence?", choices: ["Change \"has made\" to \"have made\"", "Change \"their\" to \"its\"", "Change \"they\" to \"it\"", "Both B and C"], answer: 3, explanation: "\"Committee\" is a collective noun treated as singular in American English. Pronouns should be singular: \"its\" (not \"their\") and \"it\" (not \"they\"). The verb \"has made\" is already correct." },
+  { category: "Sentence structure", passage: null, question: "Which sentence correctly uses parallel structure?", choices: ["She likes running, to swim, and biking.", "He enjoys reading books, writing poetry, and to paint.", "They decided to study hard, sleep well, and eat healthy.", "The job requires typing, to file, and answering phones."], answer: 2, explanation: "Parallel structure means list items use the same grammatical form. \"To study, sleep, and eat\" all use the infinitive consistently. The other options mix gerunds with infinitives, breaking parallelism." }
+];
+
+let answered = new Array(questions.length).fill(null);
+let current = 0;
+
+function updateProgress() {
+  const done = answered.filter(a => a !== null).length;
+  const correct = answered.filter((a, i) => a === questions[i].answer).length;
+  document.getElementById('score-badge').textContent = `${done} / ${questions.length} answered`;
+  document.getElementById('correct-badge').textContent = done > 0 ? `${correct} correct` : '';
+  document.getElementById('prog').style.width = `${(done / questions.length) * 100}%`;
+}
+
+function renderQuestion(i) {
+  updateProgress();
+  const q = questions[i];
+  let html = `<div class="q-card">
+    <div class="q-meta">Question ${i + 1} of ${questions.length} &nbsp;·&nbsp; ${q.category}</div>`;
+  if (q.passage) html += `<div class="passage">${q.passage}</div>`;
+  html += `<div class="q-text">${q.question}</div><div class="choices">`;
+  q.choices.forEach((c, ci) => {
+    const state = answered[i] !== null ? (ci === q.answer ? 'correct' : ci === answered[i] ? 'wrong' : '') : '';
+    const dis = answered[i] !== null ? 'disabled' : '';
+    html += `<button class="choice-btn ${state}" ${dis} onclick="pick(${i},${ci})">${String.fromCharCode(65 + ci)}. ${c}</button>`;
+  });
+  html += `</div>`;
+  const fb = answered[i] !== null;
+  const isRight = answered[i] === q.answer;
+  html += `<div class="feedback ${fb ? 'show' : ''} ${isRight ? 'ok' : 'no'}">${fb ? (isRight ? '✓ Correct — ' : '✗ Not quite — ') + q.explanation : ''}</div>`;
+  if (fb) {
+    html += `<div class="action-row">`;
+    if (i < questions.length - 1) html += `<button class="btn primary" onclick="goNext()">Next question →</button>`;
+    else {
+      const score = answered.filter((a, j) => a === questions[j].answer).length;
+      html += `<div class="final-score" style="width:100%"><div class="big-num">${score}/${questions.length}</div><div class="label">questions correct</div><button class="btn" onclick="resetQuiz()">Start over</button></div>`;
+    }
+    html += `</div>`;
+  }
+  html += `</div>`;
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function pick(qi, ci) {
+  if (answered[qi] !== null) return;
+  answered[qi] = ci;
+  renderQuestion(qi);
+}
+
+function goNext() {
+  if (current < questions.length - 1) { current++; renderQuestion(current); }
+}
+
+function resetQuiz() {
+  answered = new Array(questions.length).fill(null);
+  current = 0;
+  renderQuestion(0);
+}
+
+const prompts = [
+  "Some people believe students should be required to learn a second language in school. Others believe this requirement is unnecessary.",
+  "Some argue that social media has a negative impact on teenagers' mental health and should be limited. Others believe it provides valuable connection and opportunity.",
+  "Some people think employees should have the option to work from home permanently. Others argue that in-person work is essential for productivity and teamwork.",
+  "Some believe high school students should be required to complete community service hours before graduation. Others feel students should choose how to spend their time.",
+  "Some argue that standardized tests are an unfair and unreliable measure of student ability. Others believe they provide a consistent and objective benchmark."
+];
+let promptIndex = 0;
+
+function newPrompt() {
+  promptIndex = (promptIndex + 1) % prompts.length;
+  document.getElementById('prompt-text').textContent = prompts[promptIndex];
+  document.getElementById('essay-text').value = '';
+  document.getElementById('word-count').textContent = '0 words';
+  document.getElementById('ai-feedback').classList.remove('show');
+}
+
+function clearEssay() {
+  document.getElementById('essay-text').value = '';
+  document.getElementById('word-count').textContent = '0 words';
+  document.getElementById('ai-feedback').classList.remove('show');
+}
+
+function updateWordCount() {
+  const text = document.getElementById('essay-text').value.trim();
+  const words = text ? text.split(/\s+/).length : 0;
+  document.getElementById('word-count').textContent = `${words} word${words !== 1 ? 's' : ''}`;
+}
+
+async function getAIFeedback() {
+  const text = document.getElementById('essay-text').value.trim();
+  const box = document.getElementById('ai-feedback');
+  if (!text || text.split(/\s+/).length < 20) {
+    box.innerHTML = 'Please write at least a few sentences before requesting feedback.';
+    box.className = 'feedback-box show';
+    return;
+  }
+  box.innerHTML = '<div class="loading-dots"><span>●</span><span>●</span><span>●</span></div> Analyzing your essay...';
+  box.className = 'feedback-box show';
+
+  const topic = prompts[promptIndex];
+  const prompt = `You are a HiSET essay scorer. Score this essay response about the topic: "${topic}"
+
+Score it on four categories (each 1-6):
+- Development of ideas
+- Organization
+- Language use and word choice
+- Conventions (grammar, punctuation, spelling)
+
+Then give 2-3 specific, encouraging suggestions to improve. Be concise and practical — this is a test-prep tool.
+
+Format your response like:
+📊 SCORES
+Development: X/6 — [one sentence why]
+Organization: X/6 — [one sentence why]
+Language use: X/6 — [one sentence why]
+Conventions: X/6 — [one sentence why]
+
+💡 SUGGESTIONS TO IMPROVE
+1. [specific suggestion]
+2. [specific suggestion]
+3. [specific suggestion]
+
+Essay to score:
+${text}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const reply = data.content?.find(b => b.type === 'text')?.text || 'Could not get feedback. Please try again.';
+    box.innerHTML = reply.replace(/\n/g, '<br>');
+  } catch (e) {
+    box.innerHTML = 'Error connecting to feedback service. Please try again.';
+  }
+}
+
+function showTab(tab, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(tab).classList.add('visible');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+renderQuestion(0);
+</script>
+</body>
+</html>
