@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Social Studies Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f4f0e8; --surface: #fdfaf4; --surface2: #ece8de;
+  --border: #ddd8cc; --border2: #ccc7b8;
+  --text: #1c1a14; --text2: #5c5848; --text3: #9c9888;
+  --hist: #7a2e0e; --hist-light: #faeee8; --hist-border: #e8c0a8;
+  --civ: #1a3d6e; --civ-light: #e6ecf6; --civ-border: #a8bce0;
+  --econ: #1a5c3a; --econ-light: #e6f2ec; --econ-border: #8ecfb0;
+  --geo: #5a3d7a; --geo-light: #f0eaf8; --geo-border: #c0a0e0;
+  --success-bg: #e8f5ee; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 700px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 2rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--hist); }
+header p { font-size: 14px; color: var(--text2); }
+
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.filter-btn { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--text2); transition: all 0.14s; }
+.filter-btn:hover { background: var(--surface2); }
+.filter-btn.hist.active { background: var(--hist); color: #fff; border-color: var(--hist); }
+.filter-btn.civ.active  { background: var(--civ); color: #fff; border-color: var(--civ); }
+.filter-btn.econ.active { background: var(--econ); color: #fff; border-color: var(--econ); }
+.filter-btn.geo.active  { background: var(--geo); color: #fff; border-color: var(--geo); }
+.filter-btn.all.active  { background: var(--text); color: #fff; border-color: var(--text); }
+
+.progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+.prog-wrap { flex: 1; height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--hist); border-radius: 99px; transition: width 0.35s ease; }
+.prog-label { font-size: 13px; color: var(--text3); white-space: nowrap; }
+
+.q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.q-meta { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.q-meta.hist { color: var(--hist); }
+.q-meta.civ  { color: var(--civ); }
+.q-meta.econ { color: var(--econ); }
+.q-meta.geo  { color: var(--geo); }
+
+.source-box { border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1.25rem; font-size: 14px; line-height: 1.75; font-style: italic; border-left: 3px solid; }
+.source-box.hist { background: var(--hist-light); border-color: var(--hist); color: #4a1a06; }
+.source-box.civ  { background: var(--civ-light);  border-color: var(--civ);  color: #0e2444; }
+.source-box.econ { background: var(--econ-light); border-color: var(--econ); color: #0a3322; }
+.source-box.geo  { background: var(--geo-light);  border-color: var(--geo);  color: #32205a; }
+.source-label { font-size: 10px; font-style: normal; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 6px; opacity: 0.7; }
+
+.q-text { font-size: 15px; font-weight: 500; margin-bottom: 14px; line-height: 1.5; }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); text-align: left; transition: all 0.12s; line-height: 1.5; }
+.choice:hover:not(:disabled) { background: var(--surface2); border-color: var(--border2); }
+.choice.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); font-weight: 500; }
+.choice.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+.choice:disabled { cursor: default; }
+.choice-letter { font-size: 12px; font-weight: 500; width: 20px; flex-shrink: 0; opacity: 0.5; }
+
+.feedback { display: none; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.65; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.feedback.no { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+
+.action-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.btn { padding: 9px 20px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); transition: all 0.14s; }
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--hist); color: #fff; border-color: var(--hist); }
+.btn.primary:hover { background: #5a2008; }
+
+.score-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+.score-big { font-family: 'Fraunces', serif; font-size: 3.5rem; font-weight: 400; color: var(--hist); line-height: 1; margin-bottom: 8px; }
+.score-sub { font-size: 15px; color: var(--text2); margin-bottom: 1rem; }
+.score-msg { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; max-width: 420px; margin-left: auto; margin-right: auto; }
+.score-breakdown { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 8px; margin-bottom: 1.5rem; }
+.score-cat { padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); font-size: 13px; }
+.score-cat-name { font-weight: 500; margin-bottom: 3px; }
+.score-cat-num { font-size: 18px; font-family: 'Fraunces', serif; }
+
+footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Practice Quiz</p>
+    <h1>HiSET <em>Social Studies</em> Practice</h1>
+    <p>20 questions across all four content areas · History, Civics, Economics & Geography</p>
+  </header>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn all active" onclick="setFilter('all',this)">All questions</button>
+    <button class="filter-btn hist" onclick="setFilter('hist',this)">🏛️ History</button>
+    <button class="filter-btn civ"  onclick="setFilter('civ',this)">⚖️ Civics</button>
+    <button class="filter-btn econ" onclick="setFilter('econ',this)">💰 Economics</button>
+    <button class="filter-btn geo"  onclick="setFilter('geo',this)">🌍 Geography</button>
+  </div>
+
+  <div class="progress-row">
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <span class="prog-label" id="prog-label">0 / 20</span>
+  </div>
+
+  <div id="q-container"></div>
+</div>
+
+<footer>HiSET Social Studies Practice &nbsp;·&nbsp; Powered by Claude</footer>
+
+<script>
+const ALL = [
+  {
+    cat: 'hist', topic: 'Colonial America',
+    source: '"We hold these truths to be self-evident, that all men are created equal, that they are endowed by their Creator with certain unalienable Rights, that among these are Life, Liberty and the pursuit of Happiness." — Declaration of Independence, 1776',
+    sourceType: 'Primary source',
+    q: 'What is the main purpose of this passage from the Declaration of Independence?',
+    choices: ['To declare war on Great Britain','To establish the three branches of government','To justify American independence by asserting natural rights','To abolish slavery in the colonies'],
+    answer: 2,
+    explanation: 'This passage argues that all people have natural, God-given rights. The colonists used this idea to justify breaking from Britain — if a government fails to protect these rights, the people have the right to change it.'
+  },
+  {
+    cat: 'hist', topic: 'Civil War & Reconstruction',
+    source: null,
+    q: 'Which of the following was the PRIMARY cause of Southern states seceding from the Union before the Civil War?',
+    choices: ['Disagreement over tariff rates on imported goods','The desire to preserve and expand the institution of slavery','Opposition to building a national railroad system','Conflict over control of western territories for farming'],
+    answer: 1,
+    explanation: 'While multiple issues contributed, historians broadly agree that slavery — and Southern states\' desire to preserve and expand it — was the central cause of secession and the Civil War.'
+  },
+  {
+    cat: 'hist', topic: 'Civil Rights Movement',
+    source: 'In 1955, Rosa Parks refused to give up her seat on a Montgomery, Alabama city bus to a white passenger. Her arrest sparked the Montgomery Bus Boycott, a 381-day protest in which Black residents refused to ride city buses.',
+    sourceType: 'Historical excerpt',
+    q: 'What does the Montgomery Bus Boycott best demonstrate?',
+    choices: ['The effectiveness of armed resistance against segregation','How nonviolent economic protest could challenge unjust laws','The role of the federal government in ending segregation','Why Black voters were able to change laws through elections'],
+    answer: 1,
+    explanation: 'The boycott was a form of nonviolent economic protest — by refusing to ride buses, Black residents financially pressured the city. It succeeded and became a model for civil rights activism.'
+  },
+  {
+    cat: 'hist', topic: 'World Wars',
+    source: null,
+    q: 'The Treaty of Versailles (1919) contributed to the rise of Adolf Hitler and World War II mainly because it:',
+    choices: ['Gave Germany control over new territories in Eastern Europe','Placed harsh economic penalties and blame for WWI entirely on Germany','Dissolved the Austro-Hungarian Empire into many small nations','Established the League of Nations to maintain world peace'],
+    answer: 1,
+    explanation: 'The Treaty imposed crushing reparations and the "war guilt clause" on Germany, causing economic hardship and humiliation. This resentment was exploited by Hitler, who rose to power promising to restore German greatness.'
+  },
+  {
+    cat: 'hist', topic: 'Cold War',
+    source: null,
+    q: 'The term "Cold War" refers to the period of tension between the US and USSR after WWII. It was called "cold" because:',
+    choices: ['Most conflicts took place in cold climates like Korea and Alaska','The two superpowers never directly fought each other in open warfare','Relations between the countries were always friendly and cooperative','The war was fought primarily with economic sanctions, not military force'],
+    answer: 1,
+    explanation: 'The US and USSR competed through proxy wars, an arms race, and ideological conflict, but never directly fought each other — which would have risked nuclear war. The absence of direct military conflict between the superpowers earned it the name "Cold War."'
+  },
+  {
+    cat: 'civ', topic: 'The Constitution',
+    source: null,
+    q: 'Which constitutional principle ensures that no single branch of the federal government becomes too powerful?',
+    choices: ['Popular sovereignty','Federalism','Checks and balances','Separation of church and state'],
+    answer: 2,
+    explanation: 'Checks and balances gives each branch (legislative, executive, judicial) the ability to limit the power of the others. For example, Congress passes laws, the President can veto them, and the Supreme Court can declare them unconstitutional.'
+  },
+  {
+    cat: 'civ', topic: 'Bill of Rights',
+    source: '"Congress shall make no law respecting an establishment of religion, or prohibiting the free exercise thereof; or abridging the freedom of speech, or of the press; or the right of the people peaceably to assemble…"',
+    sourceType: '1st Amendment, US Constitution',
+    q: 'How many distinct freedoms are protected in this amendment?',
+    choices: ['Two — religion and speech','Three — religion, speech, and press','Four — religion, speech, press, and assembly','Five — religion, speech, press, assembly, and petition'],
+    answer: 3,
+    explanation: 'The First Amendment protects five freedoms: religion (establishment and free exercise), speech, press, peaceful assembly, and the right to petition the government. All five appear in this one amendment.'
+  },
+  {
+    cat: 'civ', topic: 'Three Branches',
+    source: null,
+    q: 'A bill has passed both the House of Representatives and the Senate. The President vetoes it. What must happen for the bill to become law?',
+    choices: ['The Supreme Court must approve it','The bill automatically becomes law after 30 days','Both chambers of Congress must override the veto with a two-thirds majority vote','The bill must be rewritten and passed through Congress again'],
+    answer: 2,
+    explanation: 'A presidential veto can be overridden if two-thirds of both the House and Senate vote to override it. This is a key example of checks and balances between the executive and legislative branches.'
+  },
+  {
+    cat: 'civ', topic: 'Federalism',
+    source: null,
+    q: 'Under the US federal system, which of the following is a power RESERVED to state governments?',
+    choices: ['Declaring war on foreign nations','Coining money and regulating currency','Establishing public schools and setting education standards','Negotiating treaties with other countries'],
+    answer: 2,
+    explanation: 'Education is a state power under the 10th Amendment. Declaring war, coining money, and making treaties are all powers given exclusively to the federal government by the Constitution.'
+  },
+  {
+    cat: 'civ', topic: 'Civil Rights & Voting',
+    source: null,
+    q: 'The 19th Amendment to the Constitution (1920) was significant because it:',
+    choices: ['Abolished slavery throughout the United States','Guaranteed women the right to vote','Extended voting rights to citizens aged 18 and older','Prohibited poll taxes in federal elections'],
+    answer: 1,
+    explanation: 'The 19th Amendment granted women the right to vote after decades of campaigning by the suffrage movement. (The 13th abolished slavery, the 26th lowered the voting age to 18, and the 24th abolished poll taxes.)'
+  },
+  {
+    cat: 'civ', topic: 'Civic Participation',
+    source: null,
+    q: 'A citizen disagrees with a new city policy. Which action is the MOST direct example of participating in democracy?',
+    choices: ['Moving to a different city','Writing a letter to an elected city council member','Talking about the issue with friends at home','Posting about it on social media'],
+    answer: 1,
+    explanation: 'Writing directly to an elected representative is the most direct form of civic participation — it puts pressure on decision-makers and is how democratic systems are designed to incorporate citizen input.'
+  },
+  {
+    cat: 'econ', topic: 'Supply & Demand',
+    source: null,
+    q: 'A drought destroys a large portion of the wheat crop in the country. Based on the law of supply and demand, what will most likely happen to bread prices?',
+    choices: ['Bread prices will fall because farmers need to sell what they have','Bread prices will stay the same because demand has not changed','Bread prices will rise because supply decreased while demand stayed the same','Bread prices will fall because consumers will buy less bread'],
+    answer: 2,
+    explanation: 'When supply decreases (less wheat) and demand stays the same (people still want bread), prices rise. This is the core relationship in supply and demand — scarcity drives up price.'
+  },
+  {
+    cat: 'econ', topic: 'Economic Systems',
+    source: null,
+    q: 'In a free market economy, prices for goods and services are mainly determined by:',
+    choices: ['Government regulations and price controls','The interaction of supply and demand between buyers and sellers','International trade agreements between countries','The cost of production set by manufacturers'],
+    answer: 1,
+    explanation: 'In a free market (capitalist) economy, prices are set by the market — the relationship between supply (what sellers offer) and demand (what buyers want). The government does not set prices.'
+  },
+  {
+    cat: 'econ', topic: 'Opportunity Cost',
+    source: null,
+    q: 'A student has $500 and must choose between buying a laptop for school or going on a vacation. She buys the laptop. What is the opportunity cost of her decision?',
+    choices: ['The $500 she spent on the laptop','The education benefits she gains from the laptop','The vacation she gave up by choosing the laptop','The time she spent making her decision'],
+    answer: 2,
+    explanation: 'Opportunity cost is what you give up when you make a choice. By buying the laptop, she gave up the vacation — that is her opportunity cost. The money spent is a monetary cost, not the opportunity cost.'
+  },
+  {
+    cat: 'econ', topic: 'Government & Economy',
+    source: 'During a recession, the government increases spending on roads, bridges, and schools, and also cuts taxes for working families.',
+    sourceType: 'Economic policy scenario',
+    q: 'This type of government action is an example of:',
+    choices: ['Monetary policy — using interest rates to stimulate the economy','Fiscal policy — using government spending and taxes to stimulate the economy','Trade policy — using tariffs to protect domestic industries','Supply-side policy — reducing regulations on businesses'],
+    answer: 1,
+    explanation: 'Fiscal policy refers to how the government uses spending and taxation to influence the economy. Increasing spending and cutting taxes during a recession is expansionary fiscal policy — designed to stimulate economic growth.'
+  },
+  {
+    cat: 'geo', topic: 'Maps & Tools',
+    source: 'A thematic map of the United States uses shading to show the percentage of adults with a college degree in each state. States in the Northeast are darkly shaded; states in the South are lightly shaded.',
+    sourceType: 'Map description',
+    q: 'What conclusion is best supported by this map?',
+    choices: ['Northeastern states have a higher cost of living than Southern states','Adults in the Northeast are more likely to hold college degrees than adults in the South','Southern states have fewer universities than Northeastern states','The US government invests more in education in the Northeast'],
+    answer: 1,
+    explanation: 'The map directly shows the percentage of adults with college degrees — darker shading in the Northeast means higher percentages there. You can only draw conclusions about what the map actually shows, not assumptions about why.'
+  },
+  {
+    cat: 'geo', topic: 'Human-Environment Interaction',
+    source: null,
+    q: 'Many major ancient civilizations (Egypt, Mesopotamia, China, India) developed near large rivers. What is the BEST geographic explanation for this pattern?',
+    choices: ['Rivers provided natural borders that protected civilizations from invasion','Rivers provided fresh water for drinking, farming, and transportation of goods','Living near rivers made it easier to fish, which was the primary food source','Rivers provided a source of power for early machines and factories'],
+    answer: 1,
+    explanation: 'Rivers enabled agriculture (irrigation), fresh water supply, and trade routes — the foundations for civilization. This is a core example of how physical geography shapes where and how human societies develop.'
+  },
+  {
+    cat: 'geo', topic: 'World Regions',
+    source: null,
+    q: 'Which of the following BEST describes the economic impact of a landlocked country (a country with no ocean coastline)?',
+    choices: ['Landlocked countries usually have stronger agricultural economies','Landlocked countries often face higher trade costs because they cannot use sea shipping','Landlocked countries are always poorer than coastal nations','Landlocked countries benefit from easier land-based trade with all neighbors'],
+    answer: 1,
+    explanation: 'Without ocean access, landlocked countries must rely on land or air transport for international trade, which is generally more expensive than sea shipping. This is a geographic disadvantage that often affects economic development.'
+  },
+  {
+    cat: 'hist', topic: 'Industrialization',
+    source: null,
+    q: 'The Industrial Revolution in the United States (late 1800s) most significantly changed American society by:',
+    choices: ['Causing most Americans to move from cities to rural farming communities','Shifting the economy from agriculture to manufacturing and leading to rapid urbanization','Reducing immigration to the US because there were fewer job opportunities','Strengthening the power of state governments over the federal government'],
+    answer: 1,
+    explanation: 'Industrialization transformed the US from a farming economy to one based on manufacturing. Factories drew millions of people — including immigrants — to cities, creating rapid urban growth and fundamentally changing American life.'
+  },
+  {
+    cat: 'econ', topic: 'Trade & Interdependence',
+    source: null,
+    q: 'Country A is very efficient at producing electronics. Country B is very efficient at producing food. According to the principle of comparative advantage, what should these countries do?',
+    choices: ['Each country should produce all of its own goods to be self-sufficient','Country A should produce both electronics and food since it is more advanced','Each country should specialize in what it produces most efficiently and trade with each other','The countries should merge their economies to share all production equally'],
+    answer: 2,
+    explanation: 'Comparative advantage is the idea that countries benefit when each specializes in what they produce most efficiently and then trade. This leads to more total production and lower prices than if each country tried to make everything itself.'
+  }
+];
+
+let activeFilter = 'all';
+let filtered = [...ALL];
+let current = 0;
+let answered = {};
+let totalAnswered = 0;
+let totalCorrect = 0;
+let catCorrect = { hist:0, civ:0, econ:0, geo:0 };
+let catTotal  = { hist:0, civ:0, econ:0, geo:0 };
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filtered = f === 'all' ? [...ALL] : ALL.filter(q => q.cat === f);
+  answered = {}; totalAnswered = 0; totalCorrect = 0;
+  catCorrect = {hist:0,civ:0,econ:0,geo:0}; catTotal={hist:0,civ:0,econ:0,geo:0};
+  current = 0;
+  render();
+}
+
+function updateProgress() {
+  const total = filtered.length;
+  document.getElementById('prog').style.width = (totalAnswered / total * 100) + '%';
+  document.getElementById('prog-label').textContent = totalAnswered + ' / ' + total;
+}
+
+function catLabel(c) {
+  return {hist:'History',civ:'Civics & Government',econ:'Economics',geo:'Geography'}[c];
+}
+
+function render() {
+  updateProgress();
+  if (current >= filtered.length) { renderFinal(); return; }
+  const q = filtered[current];
+  const ans = answered[current];
+
+  let html = '<div class="q-card">';
+  html += '<div class="q-meta ' + q.cat + '">' + (current+1) + ' of ' + filtered.length + ' &nbsp;·&nbsp; ' + catLabel(q.cat) + ' — ' + q.topic + '</div>';
+
+  if (q.source) {
+    html += '<div class="source-box ' + q.cat + '"><div class="source-label">' + q.sourceType + '</div>' + q.source + '</div>';
+  }
+
+  html += '<div class="q-text">' + q.q + '</div>';
+  html += '<div class="choices">';
+  q.choices.forEach((c, ci) => {
+    let cls = 'choice';
+    if (ans !== undefined) {
+      if (ci === q.answer) cls += ' correct';
+      else if (ci === ans) cls += ' wrong';
+    }
+    html += '<button class="' + cls + '"' + (ans !== undefined ? ' disabled' : '') + ' onclick="pick(' + ci + ')">';
+    html += '<span class="choice-letter">' + String.fromCharCode(65+ci) + '</span>' + c + '</button>';
+  });
+  html += '</div>';
+
+  if (ans !== undefined) {
+    const ok = ans === q.answer;
+    html += '<div class="feedback show ' + (ok?'ok':'no') + '">' + (ok ? '✓ Correct! ' : '✗ Not quite — ') + q.explanation + '</div>';
+    html += '<div class="action-row">';
+    if (current < filtered.length - 1) html += '<button class="btn primary" onclick="goNext()">Next question →</button>';
+    else html += '<button class="btn primary" onclick="showFinal()">See my score →</button>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function pick(ci) {
+  if (answered[current] !== undefined) return;
+  answered[current] = ci;
+  totalAnswered++;
+  const q = filtered[current];
+  catTotal[q.cat]++;
+  if (ci === q.answer) { totalCorrect++; catCorrect[q.cat]++; }
+  render();
+}
+
+function goNext() { current++; render(); }
+function showFinal() { current = filtered.length; render(); }
+
+function renderFinal() {
+  const total = filtered.length;
+  const pct = Math.round(totalCorrect / total * 100);
+  const msg = pct >= 80 ? 'Excellent work — you have a strong grasp of Social Studies content!' :
+              pct >= 60 ? 'Good effort! Review the explanations for questions you missed.' :
+              'Keep practicing! Try the concept guide for extra support on tricky topics.';
+
+  let breakdownHTML = '';
+  if (activeFilter === 'all') {
+    breakdownHTML = '<div class="score-breakdown">';
+    ['hist','civ','econ','geo'].forEach(c => {
+      const lbl = {hist:'History',civ:'Civics',econ:'Economics',geo:'Geography'}[c];
+      const sc = catTotal[c] > 0 ? catCorrect[c] + '/' + catTotal[c] : '—';
+      breakdownHTML += '<div class="score-cat"><div class="score-cat-name">' + lbl + '</div><div class="score-cat-num" style="color:var(--' + c + ')">' + sc + '</div></div>';
+    });
+    breakdownHTML += '</div>';
+  }
+
+  document.getElementById('q-container').innerHTML =
+    '<div class="score-card">' +
+    '<div class="score-big">' + totalCorrect + '/' + total + '</div>' +
+    '<div class="score-sub">questions correct (' + pct + '%)</div>' +
+    breakdownHTML +
+    '<p class="score-msg">' + msg + '</p>' +
+    '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
+    '<button class="btn primary" onclick="restart()">Start over</button>' +
+    '<button class="btn" onclick="window.location.href=\'hiset_social_studies_guide.html\'">Open study guide →</button>' +
+    '</div></div>';
+}
+
+function restart() {
+  answered = {}; totalAnswered = 0; totalCorrect = 0;
+  catCorrect={hist:0,civ:0,econ:0,geo:0}; catTotal={hist:0,civ:0,econ:0,geo:0};
+  current = 0; render();
+}
+
+render();
+</script>
+</body>
+</html>

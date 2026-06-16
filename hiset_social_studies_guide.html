@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Social Studies Study Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f4f0e8;
+  --surface: #fdfaf4;
+  --surface2: #ece8de;
+  --border: #ddd8cc;
+  --border2: #ccc7b8;
+  --text: #1c1a14;
+  --text2: #5c5848;
+  --text3: #9c9888;
+  --hist: #7a2e0e;
+  --hist-light: #faeee8;
+  --hist-mid: #c45a2a;
+  --civ: #1a3d6e;
+  --civ-light: #e6ecf6;
+  --civ-mid: #4a72b8;
+  --econ: #1a5c3a;
+  --econ-light: #e6f2ec;
+  --econ-mid: #4a9c72;
+  --geo: #5a3d7a;
+  --geo-light: #f0eaf8;
+  --geo-mid: #9a6abf;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 720px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 2rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--hist); }
+header p { font-size: 14px; color: var(--text2); }
+.tab-bar { display: flex; gap: 5px; margin-bottom: 2rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 5px; flex-wrap: wrap; }
+.tab { flex: 1; min-width: 100px; padding: 9px 8px; border-radius: calc(var(--radius-lg) - 4px); border: none; background: transparent; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; color: var(--text2); transition: all 0.18s; text-align: center; }
+.tab.hist.active { background: var(--hist); color: #fff; }
+.tab.civ.active  { background: var(--civ); color: #fff; }
+.tab.econ.active { background: var(--econ); color: #fff; }
+.tab.geo.active  { background: var(--geo); color: #fff; }
+.tab:not(.active):hover { background: var(--surface2); }
+.section { display: none; animation: fadeUp 0.22s ease; }
+.section.visible { display: block; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.section-intro { display: flex; align-items: flex-start; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; }
+.section-pct { font-family: 'Fraunces', serif; font-size: 2.5rem; font-weight: 400; line-height: 1; flex-shrink: 0; }
+.hist .section-pct { color: var(--hist); }
+.civ  .section-pct { color: var(--civ); }
+.econ .section-pct { color: var(--econ); }
+.geo  .section-pct { color: var(--geo); }
+.section-intro-text h2 { font-family: 'Fraunces', serif; font-size: 20px; font-weight: 400; margin-bottom: 5px; }
+.section-intro-text p { font-size: 13px; color: var(--text2); line-height: 1.6; }
+.topic-block { margin-bottom: 1.25rem; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; background: var(--surface); }
+.topic-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; cursor: pointer; user-select: none; gap: 10px; }
+.topic-header:hover { background: var(--surface2); }
+.topic-title { font-size: 15px; font-weight: 500; display: flex; align-items: center; gap: 10px; flex: 1; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.hist .topic-dot { background: var(--hist-mid); }
+.civ  .topic-dot { background: var(--civ-mid); }
+.econ .topic-dot { background: var(--econ-mid); }
+.geo  .topic-dot { background: var(--geo-mid); }
+.chevron { font-size: 16px; color: var(--text3); transition: transform 0.2s; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+.topic-body { display: none; padding: 0 18px 18px; border-top: 1px solid var(--border); }
+.topic-block.open .topic-body { display: block; }
+.concepts { margin: 12px 0; }
+.concepts-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.tag { font-size: 12px; padding: 4px 10px; border-radius: 99px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+.videos-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin: 14px 0 8px; }
+.video-links { display: flex; flex-direction: column; gap: 7px; }
+.video-link { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: var(--radius); border: 1px solid var(--border); text-decoration: none; color: var(--text); font-size: 13px; transition: all 0.14s; background: var(--bg); }
+.video-link:hover { border-color: var(--text3); background: var(--surface2); }
+.vbadge { font-size: 10px; padding: 3px 8px; border-radius: 99px; font-weight: 500; flex-shrink: 0; }
+.vbadge.ka   { background: var(--econ-light); color: var(--econ); }
+.vbadge.yt   { background: #fff0f0; color: #c0392b; }
+.vlink-text { flex: 1; line-height: 1.4; }
+.vlink-arrow { color: var(--text3); }
+.tip-box { margin-top: 14px; background: var(--surface2); border-radius: var(--radius); padding: 10px 14px; font-size: 13px; color: var(--text2); line-height: 1.6; border-left: 3px solid var(--border2); }
+.tip-box strong { font-weight: 500; color: var(--text); }
+.skills-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.25rem 1.5rem; margin-top: 2rem; }
+.skills-card h3 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 400; margin-bottom: 1rem; }
+.skills-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+.skill-item { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 14px; }
+.skill-name { font-size: 13px; font-weight: 500; margin-bottom: 4px; }
+.skill-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Study Guide</p>
+    <h1>HiSET <em>Social Studies</em> Test</h1>
+    <p>60 questions &nbsp;·&nbsp; 70 minutes &nbsp;·&nbsp; Passing score: 8 / 20</p>
+  </header>
+
+  <div class="tab-bar">
+    <button class="tab hist active" onclick="showTab('hist',this)">🏛️ History · 35%</button>
+    <button class="tab civ"  onclick="showTab('civ',this)">⚖️ Civics · 35%</button>
+    <button class="tab econ" onclick="showTab('econ',this)">💰 Economics · 20%</button>
+    <button class="tab geo"  onclick="showTab('geo',this)">🌍 Geography · 10%</button>
+  </div>
+
+  <!-- HISTORY -->
+  <div id="hist" class="section hist visible">
+    <div class="section-intro">
+      <div class="section-pct">35%</div>
+      <div class="section-intro-text">
+        <h2>US & World History</h2>
+        <p>Roughly 21 questions. Covers American history from colonialism to present, plus key world history events. Focus on causes and effects of major events — not just dates.</p>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Colonial America & the American Revolution</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">13 colonies</span><span class="tag">Causes of the Revolution</span><span class="tag">Declaration of Independence</span><span class="tag">Articles of Confederation</span><span class="tag">Constitutional Convention</span><span class="tag">Federalists vs Anti-Federalists</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-history/road-to-revolution" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Road to Revolution — causes & events</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=HlUiSBXQHCw" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">American Revolution — CrashCourse US History #7</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the key grievances in the Declaration of Independence — the HiSET may show you a primary source excerpt and ask you to identify what complaint it represents.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Civil War & Reconstruction</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Causes of the Civil War</span><span class="tag">Slavery & abolition</span><span class="tag">Emancipation Proclamation</span><span class="tag">13th, 14th, 15th Amendments</span><span class="tag">Reconstruction era</span><span class="tag">Jim Crow laws</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-history/civil-war-era" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Civil War era — causes, battles & aftermath</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=0-YWCp2sDX0" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Reconstruction — CrashCourse US History #22</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the difference between the 13th (abolished slavery), 14th (equal protection), and 15th (voting rights for Black men) Amendments — these come up frequently.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>World Wars I & II</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Causes of WWI (MAIN)</span><span class="tag">Treaty of Versailles</span><span class="tag">Rise of fascism</span><span class="tag">Holocaust</span><span class="tag">US entry into WWII</span><span class="tag">Allied powers vs Axis</span><span class="tag">Effects of WWII</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-history/rise-to-world-power" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">WWI & the US rise to world power</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=CkQoFzPetMY" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">World War II — CrashCourse World History #38</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the acronym MAIN for WWI causes: Militarism, Alliances, Imperialism, Nationalism. Also understand why the Treaty of Versailles contributed to WWII.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Cold War & Civil Rights Movement</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">US vs USSR</span><span class="tag">Korean & Vietnam Wars</span><span class="tag">Cuban Missile Crisis</span><span class="tag">Brown v. Board of Education</span><span class="tag">Rosa Parks & MLK</span><span class="tag">Civil Rights Act 1964</span><span class="tag">Voting Rights Act 1965</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-history/postwar-era" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Postwar US — Cold War & Civil Rights</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=G1kFExS8Oug" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Civil Rights Movement — CrashCourse US History #39</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>World history & global connections</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Age of Exploration</span><span class="tag">Colonialism & imperialism</span><span class="tag">Industrial Revolution</span><span class="tag">French Revolution</span><span class="tag">Independence movements</span><span class="tag">Globalization</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/world-history" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">World history — all eras</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=Yocja_N5s1I" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Imperialism — CrashCourse World History #35</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIVICS -->
+  <div id="civ" class="section civ">
+    <div class="section-intro">
+      <div class="section-pct">35%</div>
+      <div class="section-intro-text">
+        <h2>Civics & Government</h2>
+        <p>Roughly 21 questions — tied with History as the largest section. Focus heavily on the Constitution, the three branches of government, and citizens' rights.</p>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>The US Constitution</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Preamble & purpose</span><span class="tag">Articles I–VII</span><span class="tag">Bill of Rights (1st–10th Amendments)</span><span class="tag">Later Amendments</span><span class="tag">Separation of powers</span><span class="tag">Checks & balances</span><span class="tag">Federalism</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-government-and-civics/us-gov-foundations/us-gov-the-constitution" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">The US Constitution — structure & principles</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=oYsQpWfcGgI" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">The Constitution — CrashCourse Government #2</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=sF1DSR0CN84" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">The Bill of Rights — CrashCourse Government #15</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Memorize the first 10 Amendments (Bill of Rights). Know that the 1st Amendment covers freedom of speech, religion, press, assembly, and petition — five freedoms in one.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Three branches of government</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Legislative branch (Congress)</span><span class="tag">Senate vs House of Representatives</span><span class="tag">Executive branch (President)</span><span class="tag">Presidential powers & veto</span><span class="tag">Judicial branch (Supreme Court)</span><span class="tag">Judicial review</span><span class="tag">Impeachment</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-government-and-civics/us-gov-foundations/us-gov-separation-of-powers-and-checks-and-balances" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Separation of powers & checks and balances</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=18JMDHDPSGo" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Three branches explained — CrashCourse Government #3</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know how a bill becomes a law — this is a very common question. Congress passes it → President signs or vetoes → Congress can override a veto with a 2/3 majority.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Rights & responsibilities of citizens</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Civil liberties vs civil rights</span><span class="tag">Due process</span><span class="tag">Equal protection</span><span class="tag">Voting rights history</span><span class="tag">Civic duties (voting, jury, taxes)</span><span class="tag">Citizenship requirements</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-government-and-civics/us-gov-civil-liberties-and-civil-rights" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Civil liberties & civil rights</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=bO7FQsCcbD8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Civil liberties vs civil rights explained</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know the difference — civil liberties protect you FROM the government (free speech), while civil rights protect you from discrimination BY others (equal treatment).</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Political systems & democracy</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Democracy vs autocracy</span><span class="tag">Federal vs state powers</span><span class="tag">Political parties</span><span class="tag">Electoral process</span><span class="tag">Role of media</span><span class="tag">Local & state government</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-government-and-civics/us-gov-elections-and-voting" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Elections, voting & political participation</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=Gqt3bGxWFww" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Federalism — CrashCourse Government #4</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ECONOMICS -->
+  <div id="econ" class="section econ">
+    <div class="section-intro">
+      <div class="section-pct">20%</div>
+      <div class="section-intro-text">
+        <h2>Economics</h2>
+        <p>Roughly 12 questions. Covers basic economic principles, supply and demand, economic systems, and the role of government in the economy. No math required — focus on concepts.</p>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Basic economic concepts</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Scarcity & choice</span><span class="tag">Opportunity cost</span><span class="tag">Needs vs wants</span><span class="tag">Goods & services</span><span class="tag">Producers & consumers</span><span class="tag">Incentives</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/economics-finance-domain/ap-macroeconomics/basic-economics-concepts-macro" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Basic economic concepts — scarcity, opportunity cost</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=d8uTB5XorBw" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Intro to economics — CrashCourse Economics #1</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Opportunity cost means what you give up to make a choice. If you spend $100 on shoes, the opportunity cost is whatever else you could have bought with that $100.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Supply, demand & markets</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Law of supply</span><span class="tag">Law of demand</span><span class="tag">Equilibrium price</span><span class="tag">Market competition</span><span class="tag">Inflation & deflation</span><span class="tag">Supply & demand graphs</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/economics-finance-domain/microeconomics/supply-demand-equilibrium" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Supply, demand & market equilibrium</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=g9eDAndO_Io" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Supply & demand — CrashCourse Economics #4</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> When price goes up → demand goes down. When price goes down → demand goes up. The HiSET often shows a graph and asks you to predict what happens when supply or demand shifts.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Economic systems & government's role</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Free market / capitalism</span><span class="tag">Command economy</span><span class="tag">Mixed economy</span><span class="tag">GDP & economic growth</span><span class="tag">Fiscal policy (taxes & spending)</span><span class="tag">Monetary policy (interest rates)</span><span class="tag">Unemployment & recession</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/economics-finance-domain/ap-macroeconomics/ap-macro-fiscal-policy" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Fiscal policy & the role of government</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=B43YEW2FvDs" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Economic systems — CrashCourse Economics #3</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Personal finance & interdependence</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Budgeting & saving</span><span class="tag">Credit & debt</span><span class="tag">Trade & imports/exports</span><span class="tag">Globalization</span><span class="tag">Interdependence of economies</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/economics-finance-domain/core-finance/personal-finance" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Personal finance — budgeting, saving & credit</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=AXOqTDQFDBc" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">International trade — CrashCourse Economics #15</span><span class="vlink-arrow">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GEOGRAPHY -->
+  <div id="geo" class="section geo">
+    <div class="section-intro">
+      <div class="section-pct">10%</div>
+      <div class="section-intro-text">
+        <h2>Geography</h2>
+        <p>Roughly 6 questions — the smallest section, but easy points if you know the basics. Focus on map reading, world regions, and how geography affects human activity.</p>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Maps, tools & geographic concepts</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Latitude & longitude</span><span class="tag">Map types (political, physical, thematic)</span><span class="tag">Scale & legend</span><span class="tag">Continents & oceans</span><span class="tag">Cardinal directions</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/humanities/us-history/ap-us-history/period-1/a/the-columbian-exchange" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Geography & map skills</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=LPRN0KiGSFU" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Introduction to geography — CrashCourse Geography #1</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> The HiSET will show you maps and ask you to draw conclusions. Practice reading map keys/legends and identifying what different shadings or symbols mean.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header">
+        <span class="topic-title"><span class="topic-dot"></span>Human & physical geography</span>
+        <span class="chevron">▾</span>
+      </div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags">
+            <span class="tag">Physical features (mountains, rivers, plains)</span><span class="tag">Climate zones</span><span class="tag">Human-environment interaction</span><span class="tag">Migration patterns</span><span class="tag">Population distribution</span><span class="tag">Natural resources & economies</span>
+          </div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.youtube.com/watch?v=fMDxlSRH3ok" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Human vs physical geography — CrashCourse Geography #2</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=TZPrn3RIpgQ" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">World regions overview</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Know how geography shapes history — why do cities form near rivers? Why did slavery expand in the South? Geography questions often connect to history and economics.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="skills-card">
+    <h3>Reasoning skills the test also measures</h3>
+    <div class="skills-grid">
+      <div class="skill-item"><div class="skill-name">Primary sources</div><div class="skill-desc">Read excerpts from speeches, laws, and documents and identify their main argument</div></div>
+      <div class="skill-item"><div class="skill-name">Charts & graphs</div><div class="skill-desc">Interpret bar graphs, timelines, and data tables about historical or economic topics</div></div>
+      <div class="skill-item"><div class="skill-name">Political cartoons</div><div class="skill-desc">Identify the message or point of view expressed in a political cartoon</div></div>
+      <div class="skill-item"><div class="skill-name">Cause & effect</div><div class="skill-desc">Explain why historical events happened and what resulted from them</div></div>
+      <div class="skill-item"><div class="skill-name">Compare & contrast</div><div class="skill-desc">Identify similarities and differences between events, systems, or time periods</div></div>
+      <div class="skill-item"><div class="skill-name">Point of view</div><div class="skill-desc">Recognize an author's or historical figure's perspective and potential bias</div></div>
+    </div>
+  </div>
+</div>
+
+<footer>HiSET Social Studies Study Guide &nbsp;·&nbsp; All video links open free resources on Khan Academy or YouTube &nbsp;·&nbsp; Powered by Claude</footer>
+
+<script>
+function toggle(block) { block.classList.toggle('open'); }
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById(id).classList.add('visible');
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
