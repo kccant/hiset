@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading Visual Evidence — A Primer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f1efe9; --surface: #fbfaf6; --surface2: #e7e2d4;
+  --border: #d9d2bf; --border2: #c2b89e;
+  --text: #221f1a; --text2: #5a5650; --text3: #8a8579;
+  --sci: #1a5c3a; --sci-light: #e6f2ec; --sci-border: #8ecfb0;
+  --ss: #c45a2a; --ss-light: #f5e8e0; --ss-border: #e0b08c;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 720px; margin: 0 auto; }
+.top-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text3); text-decoration: none; margin-bottom: 1.5rem; }
+.top-link:hover { color: var(--text2); }
+
+header { text-align: center; margin-bottom: 1.5rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(1.6rem, 5.5vw, 2.5rem); line-height: 1.2; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--ss); }
+header p { font-size: 14px; color: var(--text2); max-width: 520px; margin: 0 auto; }
+
+.chip-row { display: flex; justify-content: center; gap: 6px; flex-wrap: wrap; margin: 1.5rem 0; }
+.chip { font-size: 12px; padding: 5px 12px; border-radius: 99px; background: var(--surface); border: 1px solid var(--border); color: var(--text2); }
+
+.toolbar { display: flex; justify-content: flex-end; margin-bottom: 0.75rem; }
+.btn { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); cursor: pointer; transition: all .15s; text-decoration: none; display: inline-block; }
+.btn:hover { border-color: var(--border2); }
+.btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.btn:focus-visible { outline: 2px solid var(--sci); outline-offset: 2px; }
+
+.section-block { margin-bottom: 1.75rem; }
+.section-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 0.85rem; padding: 0 2px; }
+.section-num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; color: var(--surface); }
+.section-num.sci { background: var(--sci); }
+.section-num.ss { background: var(--ss); }
+.section-title { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 3px; }
+.section-desc { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+
+.topic-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; cursor: pointer; overflow: hidden; }
+.topic-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
+.topic-title { display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 500; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.topic-dot.sci { background: var(--sci); }
+.topic-dot.ss { background: var(--ss); }
+.chevron { color: var(--text3); transition: transform .2s; font-size: 13px; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+.topic-body { display: none; padding: 0 18px 18px; }
+.topic-block.open .topic-body { display: block; }
+
+.concepts-label, .videos-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 8px; }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag { font-size: 12px; padding: 5px 11px; border-radius: 99px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+.video-links { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.video-link { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); text-decoration: none; color: var(--text); font-size: 13px; transition: border-color .15s; }
+.video-link:hover { border-color: var(--border2); }
+.vbadge { font-size: 10.5px; font-weight: 500; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; }
+.vbadge.ka { background: var(--sci-light); color: var(--sci); }
+.vbadge.yt { background: var(--ss-light); color: var(--ss); }
+.vbadge.web { background: var(--surface2); color: var(--text2); }
+.vlink-text { flex: 1; }
+.vlink-arrow { color: var(--text3); flex-shrink: 0; }
+
+.tip-box { background: var(--sci-light); border: 1px solid var(--sci-border); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--text); }
+.tip-box strong { color: var(--sci); }
+
+.cta { text-align: center; margin-top: 2rem; padding: 1.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.cta p { font-size: 14px; color: var(--text2); margin-bottom: 14px; }
+
+@media (max-width: 480px) { .topic-header { padding: 12px 14px; } .topic-body { padding: 0 14px 14px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="top-link" href="index.html">← Back to study hub</a>
+
+  <header>
+    <div class="eyebrow">HiSET Science &amp; Social Studies</div>
+    <h1>Reading visual evidence <em>before you answer.</em></h1>
+    <p>Charts, graphs, tables, diagrams, maps, and political cartoons all show up on the test. The habits below apply to every one of them.</p>
+  </header>
+
+  <div class="chip-row">
+    <span class="chip">Bar graphs</span>
+    <span class="chip">Line graphs</span>
+    <span class="chip">Pie charts</span>
+    <span class="chip">Data tables</span>
+    <span class="chip">Diagrams &amp; maps</span>
+  </div>
+
+  <div class="toolbar"><button class="btn" onclick="toggleAll()">Expand all</button></div>
+
+  <!-- SECTION 1 -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num sci">1</div>
+      <div>
+        <div class="section-title">Before You Answer Anything</div>
+        <div class="section-desc">Two habits that apply no matter what kind of visual you're looking at — and that prevent most careless mistakes before they happen.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot sci"></span>Read the frame before the data</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Title states the subject</span><span class="tag">Axis labels state what's measured</span><span class="tag">Units change the meaning</span><span class="tag">Legend explains color-coding</span></div>
+        </div>
+        <div class="videos-label">Resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/math/statistics-probability/displaying-describing-data" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Displaying and describing data — overview unit</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Spend the first few seconds reading only the title, axis labels, and legend — before looking at any individual bar, point, or slice. Answering before doing this is the single most common cause of careless mistakes.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot sci"></span>Don't assume the scale</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Check what each gridline equals</span><span class="tag">Graphs that don't start at zero</span><span class="tag">Equal gaps ≠ equal amounts</span><span class="tag">Broken-axis symbols</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.youtube.com/watch?v=gs-OPF3KEGU" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Misleading line graphs — Khan Academy</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Find at least two labeled gridlines before reading any value off a chart. Never assume gridlines automatically count by 1, 5, or 10 — confirm it from the numbers actually printed on the axis.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num ss">2</div>
+      <div>
+        <div class="section-title">Reading Each Chart Type</div>
+        <div class="section-desc">Bar graphs, line graphs, pie charts, tables, and diagrams each reward a slightly different reading strategy. Here's what to look for in each.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot ss"></span>Bar graphs — comparing categories</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Compare bar heights side by side</span><span class="tag">Grouped or stacked bars show two variables</span><span class="tag">Tallest/shortest bar first</span><span class="tag">Category order can be arbitrary</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/math/statistics/v/reading-bar-graphs" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Reading bar graphs</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> If a question asks for the difference between two bars, read both exact values off the axis first, then subtract. Don't try to estimate the gap by eye.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot ss"></span>Line graphs — change over time</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Each point is one measurement</span><span class="tag">Slope shows rate of change</span><span class="tag">Steeper line = faster change</span><span class="tag">Flat line = no change</span><span class="tag">Peaks &amp; valleys mark turning points</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/math/statistics-probability/displaying-describing-data/more-on-data-displays/v/u08-l1-t2-we2-reading-line-graphs" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Reading line graphs</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> When a question asks where change happened "the most," compare the steepness between each pair of consecutive points — don't just compare the highest point to the lowest one.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot ss"></span>Pie charts — parts of a whole</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">All slices add up to 100%</span><span class="tag">Combine slices for "combined" questions</span><span class="tag">Bigger slice ≠ most important detail</span><span class="tag">Legend matches color to category</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/math/statistics-probability/analyzing-categorical-data/one-categorical-variable/v/reading-pie-graphs-circle-graphs" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Reading pie graphs (circle graphs)</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> If a question asks about two categories combined, just add their percentages directly from the legend — there's no need to estimate slice sizes visually.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot ss"></span>Data tables — exact values, careful matching</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Match column header AND row header</span><span class="tag">Watch for unit changes between columns</span><span class="tag">Don't drift to the wrong row</span><span class="tag">Totals may need to be calculated</span></div>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Trace your finger along the row and down the column at the same time to land on the exact cell. Most table mistakes come from drifting to a neighboring row, not from misunderstanding what's being asked.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot ss"></span>Diagrams, maps &amp; political cartoons</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Diagrams: trace arrows/labels in order</span><span class="tag">Maps: check the legend/key first</span><span class="tag">Cartoons: labels, exaggeration, symbolism</span><span class="tag">Captions often state the point directly</span></div>
+        </div>
+        <div class="videos-label">Resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.loc.gov/classroom-materials/political-cartoons-finding-point-of-view/" target="_blank"><span class="vbadge web">Library of Congress</span><span class="vlink-text">Political cartoons — finding point of view</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> For a political cartoon, identify every labeled object first, then ask what's exaggerated and why. The combination of labels plus exaggeration is almost always where the cartoonist's point lives.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num sci">3</div>
+      <div>
+        <div class="section-title">Common Traps on Test Day</div>
+        <div class="section-desc">Two reasoning mistakes the test is specifically designed to catch — both come up across science and social studies passages alike.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot sci"></span>Correlation isn't causation</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Two trends together ≠ one causes the other</span><span class="tag">"Affects" claims need more than a pattern</span><span class="tag">Check what the choice actually claims</span></div>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> If an answer choice says one variable "causes" or "leads to" another based only on a graph showing both rising or falling together, treat it with suspicion — a graph by itself usually shows correlation, not proof of cause.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot sci"></span>Percentages vs. raw numbers</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Bigger percent ≠ bigger raw count</span><span class="tag">Confirm what the question is asking for</span><span class="tag">Combining percentages needs the same whole</span><span class="tag">Sample size changes what a percent means</span></div>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Before calculating anything, reread the question to confirm whether it wants a percentage or an actual count. These two answers can look similar in a graph but are rarely interchangeable.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <p>Ready to put these habits to work on real charts?</p>
+    <a class="btn primary" href="hiset_graph_reading_practice.html">Try the Graph &amp; Data Reading quiz — 10 charts →</a>
+  </div>
+</div>
+
+<script>
+function toggle(el) { el.classList.toggle('open'); }
+let allOpen = false;
+function toggleAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.topic-block').forEach(el => el.classList.toggle('open', allOpen));
+  document.querySelector('.toolbar .btn').textContent = allOpen ? 'Collapse all' : 'Expand all';
+}
+</script>
+</body>
+</html>

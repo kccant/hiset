@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Scientific Method Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f4f0; --surface: #f8fbf8; --surface2: #e4ece4;
+  --border: #ccd8cc; --border2: #b8ccb8;
+  --text: #141c14; --text2: #485448; --text3: #889088;
+  --life: #1a5c3a; --life-light: #e6f2ec; --life-border: #8ecfb0;
+  --phys: #1a3d6e; --phys-light: #e6ecf6; --phys-border: #a0bcdc;
+  --earth: #6b3d12; --earth-light: #f5ece0; --earth-border: #d4a870;
+  --success-bg: #e6f2ec; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 700px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 2rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--life); }
+header p { font-size: 14px; color: var(--text2); }
+
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; justify-content: center; margin-bottom: 1.5rem; }
+.filter-btn { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text2); transition: all .15s; }
+.filter-btn:hover { border-color: var(--border2); }
+.filter-btn.active { background: var(--text); color: var(--surface); border-color: var(--text); }
+.filter-btn:focus-visible { outline: 2px solid var(--phys); outline-offset: 2px; }
+
+.progress-wrap { margin-bottom: 1.75rem; }
+.progress-label { font-size: 12px; color: var(--text3); text-align: center; margin-bottom: 6px; }
+.progress-track { height: 4px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--life); border-radius: 99px; transition: width .3s ease; }
+
+.scenario-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.75rem; margin-bottom: 1.25rem; }
+.scenario-meta { display: flex; gap: 8px; align-items: center; margin-bottom: 14px; flex-wrap: wrap; }
+.cat-badge { font-size: 11px; font-weight: 500; padding: 4px 10px; border-radius: 99px; letter-spacing: .02em; }
+.cat-badge.life { background: var(--life-light); color: var(--life); border: 1px solid var(--life-border); }
+.cat-badge.phys { background: var(--phys-light); color: var(--phys); border: 1px solid var(--phys-border); }
+.cat-badge.earth { background: var(--earth-light); color: var(--earth); border: 1px solid var(--earth-border); }
+.scenario-title { font-family: 'Fraunces', serif; font-style: italic; font-size: 19px; color: var(--text); margin-bottom: 12px; }
+.scenario-text { font-size: 15px; line-height: 1.7; color: var(--text); margin-bottom: 6px; }
+
+.question-block { margin-top: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+.q-tag { display: inline-block; font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--text3); margin-bottom: 6px; }
+.q-prompt { font-size: 15px; font-weight: 500; margin-bottom: 12px; }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice-btn { text-align: left; padding: 11px 14px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--surface); color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 14px; cursor: pointer; transition: all .15s; }
+.choice-btn:hover:not(:disabled) { border-color: var(--border2); background: var(--surface2); }
+.choice-btn:focus-visible { outline: 2px solid var(--phys); outline-offset: 2px; }
+.choice-btn:disabled { cursor: default; }
+.choice-btn.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); font-weight: 500; }
+.choice-btn.incorrect { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+
+.feedback { margin-top: 10px; padding: 12px 14px; border-radius: var(--radius); font-size: 13.5px; line-height: 1.5; }
+.feedback.success { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.feedback.danger { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+
+.nav-row { display: flex; justify-content: flex-end; margin-top: 1.25rem; }
+.btn { font-family: 'DM Sans', sans-serif; font-size: 14px; padding: 10px 20px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; transition: all .15s; }
+.btn:hover:not(:disabled) { border-color: var(--border2); }
+.btn:disabled { opacity: .4; cursor: not-allowed; }
+.btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.btn:focus-visible { outline: 2px solid var(--phys); outline-offset: 2px; }
+
+.score-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.25rem 1.75rem; text-align: center; }
+.score-big { font-family: 'Fraunces', serif; font-size: 3rem; color: var(--life); margin-bottom: 4px; }
+.score-sub { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+.score-breakdown { display: flex; justify-content: center; gap: 24px; margin-bottom: 20px; flex-wrap: wrap; }
+.score-cat-name { font-size: 12px; color: var(--text3); margin-bottom: 4px; }
+.score-cat-num { font-family: 'Fraunces', serif; font-size: 22px; }
+.score-msg { font-size: 14px; color: var(--text2); margin-bottom: 20px; }
+
+@media (max-width: 480px) { .scenario-card { padding: 1.25rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">HiSET Science · Scientific Method</div>
+    <h1>Six experiments, <em>every part of the method.</em></h1>
+    <p>Identify the hypothesis, the independent and dependent variables, the controlled variables, the control group, and the best conclusion — the same way the real HiSET asks.</p>
+  </header>
+
+  <div class="filter-bar" id="filter-bar">
+    <button class="filter-btn active" data-filter="all">All experiments</button>
+    <button class="filter-btn" data-filter="life">Life Science</button>
+    <button class="filter-btn" data-filter="phys">Physical Science</button>
+    <button class="filter-btn" data-filter="earth">Earth Science</button>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">Experiment 1 of 6</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div id="q-container"></div>
+</div>
+
+<script>
+const experiments = [
+  {
+    id: 'e1', category: 'life',
+    title: 'Fertilizer and Tomato Plant Height',
+    text: "A gardener wants to know if a new fertilizer helps tomato plants grow taller. She plants 20 tomato seedlings of the same variety in identical pots with the same soil, water, and sunlight. She gives 10 of the plants the new fertilizer once a week and gives the other 10 plants no fertilizer. After 6 weeks, she measures the height of each plant.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Will the new fertilizer make tomato plants grow taller?", "The new fertilizer will increase the height of tomato plants.", "Tomato plants that received fertilizer were taller than those that didn't.", "Plants need fertilizer, water, and sunlight to grow."],
+        answer: 1,
+        explanation: "A hypothesis is a testable prediction made before the experiment. The first choice is a research question, not a hypothesis. The third describes a result after the fact — that belongs in a conclusion. The fourth is general background knowledge, not a specific prediction for this experiment." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The height of the tomato plants", "Whether or not a plant received the new fertilizer", "The amount of water given to each plant", "The number of plants tested"],
+        answer: 1,
+        explanation: "The independent variable is what the gardener deliberately changed between groups — whether each plant received fertilizer or not." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The amount of fertilizer used", "The type of soil in the pots", "The height of the tomato plants after 6 weeks", "The number of pots used"],
+        answer: 2,
+        explanation: "Plant height is what was measured as an outcome — it depends on whether fertilizer was applied, making it the dependent variable." },
+      { tag: 'Control group', prompt: "Which group served as the control group in this experiment?",
+        choices: ["The 10 plants that received fertilizer", "The 10 plants that received no fertilizer", "All 20 plants combined", "There was no control group in this experiment"],
+        answer: 1,
+        explanation: "The control group is the baseline that doesn't receive the treatment being tested, so it can be compared against the treated group. The unfertilized plants serve that role here." }
+    ]
+  },
+  {
+    id: 'e2', category: 'phys',
+    title: 'Ramp Angle and Rolling Distance',
+    text: "A student wants to find out whether increasing the angle of a ramp affects how far a toy car travels after rolling down it. She uses the same toy car and the same smooth ramp surface for every trial. She tests the car at ramp angles of 10°, 20°, 30°, and 40°, releasing the car from the same height on the ramp each time, and measures how far the car travels across the floor after leaving the ramp.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Does ramp angle affect how far a toy car travels?", "Increasing the ramp angle will increase the distance the car travels.", "The car traveled farther at steeper angles than at shallow angles.", "Toy cars roll faster on smooth surfaces than on rough ones."],
+        answer: 1,
+        explanation: "The first choice is a question, not a prediction. The third describes results after testing — that's a conclusion. The fourth is an unrelated general fact. Only the second choice predicts a relationship before it's tested." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The distance the car traveled", "The angle of the ramp", "The type of toy car used", "The surface of the ramp"],
+        answer: 1,
+        explanation: "The ramp angle is what the student deliberately changed across trials — 10°, 20°, 30°, and 40°." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The angle of the ramp", "The height the car was released from", "The distance the car traveled after leaving the ramp", "The smoothness of the ramp surface"],
+        answer: 2,
+        explanation: "The distance traveled is the measured outcome of each trial — what depends on the ramp angle." },
+      { tag: 'Controlled variable', prompt: "Which of the following was a controlled variable in this experiment?",
+        choices: ["The ramp angle", "The release height of the car on the ramp", "The distance the car traveled", "Whether the car reached the floor"],
+        answer: 1,
+        explanation: "The release height was kept the same in every trial so that ramp angle — not release height — would explain any differences in distance." }
+    ]
+  },
+  {
+    id: 'e3', category: 'earth',
+    title: 'Soil Type and Water Retention',
+    text: "A hydrologist wants to determine whether soil type affects how much water soil can hold. She fills three identical containers with equal amounts of sand, clay, and loam soil. She pours the same amount of water into each container and waits 24 hours, then measures how much water has drained out of each container.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Which soil type holds the most water?", "The type of soil will affect how much water it retains.", "Clay soil retained more water than sand after 24 hours.", "Water is necessary for plant growth in all soil types."],
+        answer: 1,
+        explanation: "The first choice is a question, the third describes a specific result (a conclusion), and the fourth is unrelated background knowledge. Only the second choice makes a testable prediction." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The amount of water poured into each container", "The type of soil in each container", "The amount of water that drained out", "The size of the containers"],
+        answer: 1,
+        explanation: "Soil type — sand, clay, or loam — is what the hydrologist deliberately varied between containers." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The type of soil used", "The size of the containers", "The amount of water that drained out after 24 hours", "The number of containers tested"],
+        answer: 2,
+        explanation: "The amount of drained water is the measured outcome — what depends on which soil type is being tested." },
+      { tag: 'Controlled variable', prompt: "Which of the following was a controlled variable in this experiment?",
+        choices: ["The type of soil", "The amount of water poured into each container", "The amount of water that drained out", "Which soil retains the most water"],
+        answer: 1,
+        explanation: "The same amount of water was poured into every container so that soil type — not the amount of water added — would explain any difference in drainage." }
+    ]
+  },
+  {
+    id: 'e4', category: 'life',
+    title: 'Salt Concentration and Brine Shrimp Hatching',
+    text: "A marine biology student wants to know whether the concentration of salt in water affects the hatching rate of brine shrimp eggs. She prepares four containers with different salt concentrations: 0%, 1%, 2%, and 3%. Each container receives the same number of brine shrimp eggs, the same amount of water, and is kept at the same temperature and light exposure. After 48 hours, she counts how many eggs in each container have hatched.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Does salt concentration affect brine shrimp egg hatching?", "The concentration of salt in the water will affect the hatching rate of brine shrimp eggs.", "More brine shrimp eggs hatched in the 1% solution than in the 3% solution.", "Brine shrimp live in salt water in the wild."],
+        answer: 1,
+        explanation: "The first choice is phrased as a question, not a prediction. The third describes a specific result, which belongs in a conclusion. The fourth is general background knowledge. Only the second choice makes a testable prediction." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The number of eggs that hatched", "The concentration of salt in the water", "The temperature of the water", "The number of containers used"],
+        answer: 1,
+        explanation: "Salt concentration (0%, 1%, 2%, 3%) is what the student deliberately varied across containers." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The concentration of salt", "The temperature of the water", "The number of eggs that hatched after 48 hours", "The amount of water in each container"],
+        answer: 2,
+        explanation: "The number of hatched eggs is the measured outcome — it depends on the salt concentration being tested." },
+      { tag: 'Control group', prompt: "Which container represents the control group in this experiment?",
+        choices: ["The container with 1% salt", "The container with 0% salt", "The container with 3% salt", "All four containers together"],
+        answer: 1,
+        explanation: "The 0% salt container — plain fresh water — is the baseline condition the salted groups are compared against." }
+    ]
+  },
+  {
+    id: 'e5', category: 'phys',
+    title: 'Insulation Thickness and Heat Loss',
+    text: "An engineering student wants to test whether the thickness of insulation affects how quickly a cup of hot water cools. She fills four identical cups with the same amount of water at the same starting temperature, then wraps each cup with a different thickness of insulating foam: 0 mm, 5 mm, 10 mm, and 15 mm. She places all four cups in the same room and measures the water temperature in each cup after 30 minutes.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Does insulation thickness affect how fast water cools?", "Increasing the thickness of insulation will reduce how much the water cools.", "The cup with 15 mm of insulation stayed warmer than the uninsulated cup.", "Hot water always cools down to room temperature eventually."],
+        answer: 1,
+        explanation: "The first choice is a question, the third describes an observed result (a conclusion), and the fourth is a general fact unrelated to this specific test. Only the second choice predicts a relationship before testing it." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The starting temperature of the water", "The thickness of the insulation", "The temperature of the water after 30 minutes", "The size of the cups"],
+        answer: 1,
+        explanation: "Insulation thickness — 0, 5, 10, or 15 mm — is what was deliberately varied between cups." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The thickness of the insulation", "The starting temperature of the water", "The water temperature after 30 minutes", "The room temperature"],
+        answer: 2,
+        explanation: "The temperature after 30 minutes is the measured outcome — what depends on how much insulation was used." },
+      { tag: 'Controlled variable', prompt: "Which of the following was a controlled variable in this experiment?",
+        choices: ["The thickness of insulation", "The starting temperature of the water", "The temperature after 30 minutes", "Which cup cooled the least"],
+        answer: 1,
+        explanation: "Every cup started at the same water temperature, so insulation thickness — not starting temperature — would explain any difference in cooling." }
+    ]
+  },
+  {
+    id: 'e6', category: 'phys',
+    title: 'Baking Soda Amount and Balloon Inflation',
+    text: "A student wants to know if the amount of baking soda used affects how quickly a balloon inflates when mixed with vinegar in a sealed bottle. She uses the same bottle, the same amount of vinegar, and the same size balloon in every trial. She tests four amounts of baking soda — 1, 2, 3, and 4 teaspoons — and records how many seconds it takes for the balloon to fully inflate each time.",
+    questions: [
+      { tag: 'Hypothesis', prompt: "Which of the following best states the hypothesis for this experiment?",
+        choices: ["Does the amount of baking soda affect how fast a balloon inflates?", "Increasing the amount of baking soda will decrease the time it takes for the balloon to inflate.", "The balloon inflated fastest when 4 teaspoons of baking soda were used.", "Baking soda and vinegar react to produce carbon dioxide gas."],
+        answer: 1,
+        explanation: "The first choice is a question, the third describes a specific result (a conclusion), and the fourth is general background chemistry knowledge rather than a prediction about this experiment. Only the second choice predicts a relationship before it's tested." },
+      { tag: 'Independent variable', prompt: "What is the independent variable in this experiment?",
+        choices: ["The time it takes the balloon to inflate", "The amount of baking soda used", "The amount of vinegar used", "The size of the balloon"],
+        answer: 1,
+        explanation: "The amount of baking soda — 1, 2, 3, or 4 teaspoons — is what the student deliberately varied across trials." },
+      { tag: 'Dependent variable', prompt: "What is the dependent variable in this experiment?",
+        choices: ["The amount of baking soda", "The amount of vinegar", "The time it takes the balloon to fully inflate", "The size of the bottle"],
+        answer: 2,
+        explanation: "Inflation time is the measured outcome — what depends on how much baking soda was used." },
+      { tag: 'Drawing a conclusion', prompt: "Suppose the balloon inflated in 60 seconds with 1 teaspoon, 40 seconds with 2 teaspoons, 25 seconds with 3 teaspoons, and 15 seconds with 4 teaspoons of baking soda. Which conclusion is best supported by this data?",
+        choices: ["The amount of vinegar used has no effect on inflation time.", "Increasing the amount of baking soda decreases the time needed for the balloon to inflate.", "Any amount of baking soda will inflate a balloon in under 10 seconds.", "Baking soda and vinegar do not react with each other."],
+        answer: 1,
+        explanation: "The data shows a clear trend: as baking soda increases from 1 to 4 teaspoons, inflation time drops from 60 to 15 seconds — directly supporting this conclusion. The experiment can't say anything about vinegar's effect since it was held constant, and the data doesn't support the unsupported claims in the other two choices." }
+    ]
+  }
+];
+
+let filter = 'all';
+let activeList = experiments;
+let idx = 0;
+let answers = {};
+let catTotal = { life: 0, phys: 0, earth: 0 };
+let catCorrect = { life: 0, phys: 0, earth: 0 };
+let totalCorrect = 0;
+
+function totalQuestions(list) { return list.reduce((s, e) => s + e.questions.length, 0); }
+
+function applyFilter(f) {
+  filter = f;
+  activeList = f === 'all' ? experiments : experiments.filter(e => e.category === f);
+  idx = 0;
+  answers = {};
+  catTotal = { life: 0, phys: 0, earth: 0 };
+  catCorrect = { life: 0, phys: 0, earth: 0 };
+  totalCorrect = 0;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+  render();
+}
+
+function render() {
+  if (idx >= activeList.length) { renderScore(); return; }
+  const e = activeList[idx];
+  const labels = { life: 'Life Science', phys: 'Physical Science', earth: 'Earth Science' };
+  document.getElementById('progress-label').textContent = 'Experiment ' + (idx + 1) + ' of ' + activeList.length;
+  document.getElementById('progress-fill').style.width = ((idx / activeList.length) * 100) + '%';
+
+  let html = '<div class="scenario-card">';
+  html += '<div class="scenario-meta"><span class="cat-badge ' + e.category + '">' + labels[e.category] + '</span></div>';
+  html += '<div class="scenario-title">' + e.title + '</div>';
+  html += '<div class="scenario-text">' + e.text + '</div>';
+
+  e.questions.forEach((q, qi) => {
+    const key = e.id + '-' + qi;
+    const chosen = answers[key];
+    html += '<div class="question-block"><div class="q-tag">' + q.tag + '</div><div class="q-prompt">' + q.prompt + '</div><div class="choices">';
+    q.choices.forEach((ch, ci) => {
+      let cls = 'choice-btn';
+      if (chosen !== undefined) {
+        if (ci === q.answer) cls += ' correct';
+        else if (ci === chosen) cls += ' incorrect';
+      }
+      const disabledAttr = chosen !== undefined ? 'disabled' : '';
+      html += '<button class="' + cls + '" ' + disabledAttr + ' onclick="answerQ(\'' + e.id + '\',' + qi + ',' + ci + ')">' + String.fromCharCode(65 + ci) + '. ' + ch + '</button>';
+    });
+    html += '</div>';
+    if (chosen !== undefined) {
+      const isCorrect = chosen === q.answer;
+      html += '<div class="feedback ' + (isCorrect ? 'success' : 'danger') + '">' + (isCorrect ? 'Correct. ' : 'Not quite. ') + q.explanation + '</div>';
+    }
+    html += '</div>';
+  });
+
+  const allAnswered = e.questions.every((q, qi) => answers[e.id + '-' + qi] !== undefined);
+  html += '<div class="nav-row"><button class="btn primary" ' + (allAnswered ? '' : 'disabled') + ' onclick="next()">' + (idx === activeList.length - 1 ? 'See your score' : 'Next experiment') + ' →</button></div>';
+  html += '</div>';
+
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function answerQ(eid, qi, ci) {
+  const e = activeList.find(ee => ee.id === eid);
+  const key = eid + '-' + qi;
+  if (answers[key] !== undefined) return;
+  answers[key] = ci;
+  const correct = ci === e.questions[qi].answer;
+  catTotal[e.category]++;
+  if (correct) { totalCorrect++; catCorrect[e.category]++; }
+  render();
+}
+
+function next() { idx++; render(); }
+
+function renderScore() {
+  document.getElementById('progress-fill').style.width = '100%';
+  document.getElementById('progress-label').textContent = 'Experiment ' + activeList.length + ' of ' + activeList.length + ' — complete';
+  const total = totalQuestions(activeList);
+  const pct = total > 0 ? Math.round((totalCorrect / total) * 100) : 0;
+  const msg = pct >= 80 ? 'Strong work — the parts of the scientific method are clicking.' :
+              pct >= 60 ? 'Good effort. Review the explanations for the ones missed.' :
+              'Keep practicing — re-read each scenario slowly and underline what was changed versus what was measured.';
+
+  let breakdown = '';
+  if (filter === 'all') {
+    breakdown = '<div class="score-breakdown">' +
+      '<div><div class="score-cat-name">Life</div><div class="score-cat-num" style="color:var(--life)">' + (catTotal.life > 0 ? catCorrect.life + '/' + catTotal.life : '—') + '</div></div>' +
+      '<div><div class="score-cat-name">Physical</div><div class="score-cat-num" style="color:var(--phys)">' + (catTotal.phys > 0 ? catCorrect.phys + '/' + catTotal.phys : '—') + '</div></div>' +
+      '<div><div class="score-cat-name">Earth</div><div class="score-cat-num" style="color:var(--earth)">' + (catTotal.earth > 0 ? catCorrect.earth + '/' + catTotal.earth : '—') + '</div></div>' +
+      '</div>';
+  }
+
+  document.getElementById('q-container').innerHTML =
+    '<div class="score-card">' +
+    '<div class="score-big">' + totalCorrect + '/' + total + '</div>' +
+    '<div class="score-sub">questions correct (' + pct + '%)</div>' +
+    breakdown +
+    '<p class="score-msg">' + msg + '</p>' +
+    '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
+    '<button class="btn primary" onclick="applyFilter(\'' + filter + '\')">Start over</button>' +
+    '<button class="btn" onclick="window.location.href=\'index.html\'">Back to study hub →</button>' +
+    '</div></div>';
+}
+
+document.querySelectorAll('.filter-btn').forEach(b => b.addEventListener('click', () => applyFilter(b.dataset.filter)));
+applyFilter('all');
+</script>
+</body>
+</html>
