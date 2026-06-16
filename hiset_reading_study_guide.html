@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Reading Concept Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f6f1e7; --surface: #fffdf8; --surface2: #ece1ca;
+  --border: #ddd0b3; --border2: #c8b48c;
+  --text: #241c14; --text2: #5c5246; --text3: #8c8270;
+  --lit: #6b3550; --lit-light: #f4e8ee; --lit-border: #d6a8c0;
+  --info: #1f5f74; --info-light: #e6f1f4; --info-border: #9ccbd8;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 720px; margin: 0 auto; }
+.top-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text3); text-decoration: none; margin-bottom: 1.5rem; }
+.top-link:hover { color: var(--text2); }
+
+header { text-align: center; margin-bottom: 1.5rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-weight: 400; font-size: clamp(1.6rem, 5.5vw, 2.5rem); line-height: 1.2; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--lit); }
+header p { font-size: 14px; color: var(--text2); max-width: 520px; margin: 0 auto; }
+
+.stat-row { display: flex; justify-content: center; gap: 36px; margin: 1.75rem 0; }
+.stat { text-align: center; }
+.stat-num { font-family: 'Fraunces', serif; font-size: 2rem; }
+.stat-num.lit { color: var(--lit); }
+.stat-num.info { color: var(--info); }
+.stat-label { font-size: 12px; color: var(--text3); margin-top: 2px; }
+
+.skill-note { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; font-size: 13.5px; color: var(--text2); line-height: 1.55; margin-bottom: 1.5rem; }
+
+.toolbar { display: flex; justify-content: flex-end; margin-bottom: 0.75rem; }
+.btn { font-family: 'DM Sans', sans-serif; font-size: 13px; padding: 8px 16px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); cursor: pointer; transition: all .15s; }
+.btn:hover { border-color: var(--border2); }
+.btn.primary { background: var(--text); color: var(--surface); border-color: var(--text); }
+.btn:focus-visible { outline: 2px solid var(--info); outline-offset: 2px; }
+
+.section-block { margin-bottom: 1.75rem; }
+.section-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 0.85rem; padding: 0 2px; }
+.section-num { flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-style: italic; font-size: 15px; color: var(--surface); }
+.section-num.info { background: var(--info); }
+.section-num.lit { background: var(--lit); }
+.section-title { font-family: 'Fraunces', serif; font-size: 18px; margin-bottom: 3px; }
+.section-desc { font-size: 13.5px; color: var(--text2); line-height: 1.55; }
+
+.topic-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 10px; cursor: pointer; overflow: hidden; }
+.topic-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 18px; }
+.topic-title { display: flex; align-items: center; gap: 10px; font-size: 14.5px; font-weight: 500; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.topic-dot.info { background: var(--info); }
+.topic-dot.lit { background: var(--lit); }
+.chevron { color: var(--text3); transition: transform .2s; font-size: 13px; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+.topic-body { display: none; padding: 0 18px 18px; }
+.topic-block.open .topic-body { display: block; }
+
+.concepts-label, .videos-label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text3); margin-bottom: 8px; }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.tag { font-size: 12px; padding: 5px 11px; border-radius: 99px; background: var(--surface2); color: var(--text2); border: 1px solid var(--border); }
+
+.video-links { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.video-link { display: flex; align-items: center; gap: 9px; padding: 9px 12px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); text-decoration: none; color: var(--text); font-size: 13px; transition: border-color .15s; }
+.video-link:hover { border-color: var(--border2); }
+.vbadge { font-size: 10.5px; font-weight: 500; padding: 3px 8px; border-radius: 99px; flex-shrink: 0; }
+.vbadge.ka { background: var(--info-light); color: var(--info); }
+.vbadge.yt { background: var(--lit-light); color: var(--lit); }
+.vlink-text { flex: 1; }
+.vlink-arrow { color: var(--text3); flex-shrink: 0; }
+
+.tip-box { background: var(--info-light); border: 1px solid var(--info-border); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; line-height: 1.55; color: var(--text); }
+.tip-box strong { color: var(--info); }
+
+.cta { text-align: center; margin-top: 2rem; padding: 1.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.cta p { font-size: 14px; color: var(--text2); margin-bottom: 14px; }
+.cta a.btn { display: inline-block; text-decoration: none; }
+
+@media (max-width: 480px) { .topic-header { padding: 12px 14px; } .topic-body { padding: 0 14px 14px; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <a class="top-link" href="index.html">← Back to study hub</a>
+
+  <header>
+    <div class="eyebrow">HiSET Language Arts · Reading</div>
+    <h1>Four skills. <em>Every passage tests them.</em></h1>
+    <p>The HiSET Reading test doesn't separate questions by subject — it separates them by skill. Here's exactly what's tested, with free videos and a tip for each.</p>
+  </header>
+
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num lit">40%</div><div class="stat-label">Literary texts</div></div>
+    <div class="stat"><div class="stat-num info">60%</div><div class="stat-label">Informational texts</div></div>
+  </div>
+
+  <div class="skill-note">No matter which type of passage you're reading, every question on the test falls into one of four skill categories below, listed in the order the test's own framework lists them — roughly easiest to hardest.</div>
+
+  <div class="toolbar"><button class="btn" onclick="toggleAll()">Expand all</button></div>
+
+  <!-- SECTION A: COMPREHENSION -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num info">A</div>
+      <div>
+        <div class="section-title">Comprehension</div>
+        <div class="section-desc">The foundation skill, tested on every passage: can you identify what the text directly says, and how specific word choices shape its meaning and tone? These questions rarely require reading between the lines.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot info"></span>Explicit details &amp; vocabulary in context</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Stated vs. implied facts</span><span class="tag">Context clues</span><span class="tag">Multiple-meaning words</span><span class="tag">Denotation vs. connotation</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/ela/7th-grade-reading-and-vocabulary/x7538838f96af3430:uncovering-meaning/x7538838f96af3430:identifying-authors-purpose-7/v/analyzing-an-author-s-purpose-reading" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Context clues &amp; word choice in a text</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.khanacademy.org/test-prep/sat-reading-and-writing" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Reading &amp; Writing practice — Words in Context unit</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Vocabulary questions always point you to a specific line. Go back and reread that exact sentence — don't rely on what you remember the word meaning elsewhere.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot info"></span>How word choice shapes tone</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Loaded / charged language</span><span class="tag">Formal vs. informal diction</span><span class="tag">Tone shifts within a passage</span><span class="tag">Word choice vs. literal meaning</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/ela/7th-grade-reading-and-vocabulary/x7538838f96af3430:uncovering-meaning/x7538838f96af3430:identifying-authors-purpose-7/v/analyzing-an-author-s-purpose-reading" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Evaluating the effects of word choice</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Try swapping the bolded or cited word for a neutral synonym in your head. If the sentence suddenly feels flatter or different, that gap is the tone the original word was creating.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B: INFERENCE AND INTERPRETATION -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num lit">B</div>
+      <div>
+        <div class="section-title">Inference and Interpretation</div>
+        <div class="section-desc">Reading between the lines. These questions ask you to support a conclusion with evidence the author implies rather than states outright — including figurative language and what a character is likely thinking or feeling.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot lit"></span>Making evidence-based inferences</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Inference vs. assumption</span><span class="tag">Character motivation</span><span class="tag">Reasoning from textual evidence</span><span class="tag">Interpreting data in charts within a passage</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/ela/cc-2nd-reading-vocab/xfb4fc0bf01437792:cc-2nd-rural-suburban-urban/xfb4fc0bf01437792:rural-suburban-urban-reading-for-understanding-informational/v/making-inferences-in-informational-texts-reading-khan-academy" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Making inferences in informational texts</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.khanacademy.org/test-prep/sat-reading-and-writing/x0d47bcec73eb6c4b:medium-information-and-ideas/x0d47bcec73eb6c4b:inferences-2/a/inferences-top-tips" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Inferences — top tips for tricky questions</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> A correct inference is supported by the passage, not just plausible in real life. If a choice requires outside knowledge the text never gives you, it's a trap — eliminate it.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot lit"></span>Figurative language &amp; symbolism</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Simile &amp; metaphor</span><span class="tag">Personification</span><span class="tag">Symbolism</span><span class="tag">Imagery</span><span class="tag">Idiom &amp; hyperbole</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.youtube.com/watch?v=myB2EeGsoqY" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Figurative language — quick overview of the main types</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> Before picking an answer, translate the figurative phrase into plain language in your own head. If your plain-language version matches a choice, that's almost always the right one.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION C: ANALYSIS -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num info">C</div>
+      <div>
+        <div class="section-title">Analysis</div>
+        <div class="section-desc">The largest and most varied skill area. These questions step back from individual details to look at the passage as a whole — its main idea, the author's purpose, structure, and the techniques used to build meaning.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot info"></span>Main idea, theme &amp; summarizing</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Main idea vs. topic</span><span class="tag">Theme vs. moral</span><span class="tag">Summarizing key details</span><span class="tag">Main idea vs. supporting detail</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/ela/cc-2nd-reading-vocab/xfb4fc0bf01437792:cc-2nd-the-moon/xfb4fc0bf01437792:close-reading-informational-text/v/what-is-a-main-idea-reading-khan-academy" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">What is a main idea?</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> The main idea has to fit the whole passage, not just the first paragraph. If your answer choice only matches the opening, check the later paragraphs before locking it in.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot info"></span>Author's purpose, structure &amp; tone</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Inform vs. persuade vs. entertain</span><span class="tag">Cause-effect, compare-contrast, problem-solution structure</span><span class="tag">Author's viewpoint</span><span class="tag">Overall mood &amp; tone</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/ela/7th-grade-reading-and-vocabulary/x7538838f96af3430:uncovering-meaning/x7538838f96af3430:identifying-authors-purpose-7/v/analyzing-an-author-s-purpose-reading" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Analyzing an author's purpose</span><span class="vlink-arrow">↗</span></a>
+          <a class="video-link" href="https://www.youtube.com/watch?v=QVmqK6V2eag" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Comparing text structures — Khan Academy</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> If a question asks why the author included a specific paragraph, the answer is almost always tied to purpose — ask what that paragraph adds to the larger point.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION D: SYNTHESIS AND GENERALIZATION -->
+  <div class="section-block">
+    <div class="section-header">
+      <div class="section-num lit">D</div>
+      <div>
+        <div class="section-title">Synthesis and Generalization</div>
+        <div class="section-desc">The most demanding skill, often appearing with passage pairs. These questions ask you to combine evidence — sometimes from two separate texts — to draw a conclusion, predict an outcome, or compare viewpoints.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot lit"></span>Drawing conclusions &amp; making predictions</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Conclusions beyond a single line</span><span class="tag">Predicting likely outcomes</span><span class="tag">Combining multiple details</span><span class="tag">Avoiding unsupported leaps</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.khanacademy.org/test-prep/praxis-reading/praxis-reading-lessons/gtp--praxis-reading--videos--worked-examples/v/gtp--praxis-reading--video-draw-conclusions" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">Draw conclusions — worked example</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> A solid conclusion is usually backed by at least two separate details in the passage. If your answer only rests on one line, look again before choosing it.</div>
+      </div>
+    </div>
+
+    <div class="topic-block" onclick="toggle(this)">
+      <div class="topic-header"><span class="topic-title"><span class="topic-dot lit"></span>Comparing &amp; synthesizing paired passages</span><span class="chevron">▾</span></div>
+      <div class="topic-body">
+        <div class="concepts"><div class="concepts-label">Key concepts</div>
+          <div class="concept-tags"><span class="tag">Comparing viewpoints</span><span class="tag">Finding common ground between authors</span><span class="tag">Differences in tone or approach</span><span class="tag">Combining information across two texts</span></div>
+        </div>
+        <div class="videos-label">Video resources</div>
+        <div class="video-links">
+          <a class="video-link" href="https://www.youtube.com/watch?v=JdGA0Fexab8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Comparing two accounts of the same topic — Khan Academy</span><span class="vlink-arrow">↗</span></a>
+        </div>
+        <div class="tip-box"><strong>Test tip:</strong> When two passages disagree, the test often asks what both authors would still agree on. Look for the underlying fact or value neither one disputes, even if their conclusions differ.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta">
+    <p>Ready to put these skills to the test?</p>
+    <a class="btn primary" href="hiset_reading_practice.html">Try the Reading practice quiz — 22 questions →</a>
+  </div>
+</div>
+
+<script>
+function toggle(el) { el.classList.toggle('open'); }
+let allOpen = false;
+function toggleAll() {
+  allOpen = !allOpen;
+  document.querySelectorAll('.topic-block').forEach(el => el.classList.toggle('open', allOpen));
+  document.querySelector('.toolbar .btn').textContent = allOpen ? 'Collapse all' : 'Expand all';
+}
+</script>
+</body>
+</html>
