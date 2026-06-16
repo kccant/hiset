@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Science Practice Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f4f0; --surface: #f8fbf8; --surface2: #e4ece4;
+  --border: #ccd8cc; --border2: #b8ccb8;
+  --text: #141c14; --text2: #485448; --text3: #889088;
+  --life: #1a5c3a; --life-light: #e6f2ec; --life-border: #8ecfb0;
+  --phys: #1a3d6e; --phys-light: #e6ecf6; --phys-border: #a0bcdc;
+  --earth: #6b3d12; --earth-light: #f5ece0; --earth-border: #d4a870;
+  --success-bg: #e6f2ec; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
+.container { max-width: 700px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 2rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 6vw, 2.8rem); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--life); }
+header p { font-size: 14px; color: var(--text2); }
+.filter-bar { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.filter-btn { padding: 6px 14px; border-radius: 99px; border: 1px solid var(--border); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--text2); transition: all 0.14s; }
+.filter-btn:hover { background: var(--surface2); }
+.filter-btn.all.active  { background: var(--text); color: #fff; border-color: var(--text); }
+.filter-btn.life.active  { background: var(--life); color: #fff; border-color: var(--life); }
+.filter-btn.phys.active  { background: var(--phys); color: #fff; border-color: var(--phys); }
+.filter-btn.earth.active { background: var(--earth); color: #fff; border-color: var(--earth); }
+.progress-row { display: flex; align-items: center; gap: 12px; margin-bottom: 1.5rem; }
+.prog-wrap { flex: 1; height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.prog-fill { height: 100%; background: var(--life); border-radius: 99px; transition: width 0.35s ease; }
+.prog-label { font-size: 13px; color: var(--text3); white-space: nowrap; }
+.q-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1rem; animation: fadeUp 0.2s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.q-meta { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 10px; }
+.q-meta.life  { color: var(--life); }
+.q-meta.phys  { color: var(--phys); }
+.q-meta.earth { color: var(--earth); }
+.source-box { border-radius: var(--radius); padding: 12px 16px; margin-bottom: 1.25rem; font-size: 14px; line-height: 1.75; border-left: 3px solid; }
+.source-box.life  { background: var(--life-light);  border-color: var(--life);  color: #0a3322; }
+.source-box.phys  { background: var(--phys-light);  border-color: var(--phys);  color: #0e2444; }
+.source-box.earth { background: var(--earth-light); border-color: var(--earth); color: #3d2008; }
+.source-label { font-size: 10px; font-style: normal; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; margin-bottom: 6px; opacity: 0.7; }
+.q-text { font-size: 15px; font-weight: 500; margin-bottom: 14px; line-height: 1.5; }
+.choices { display: flex; flex-direction: column; gap: 8px; }
+.choice { display: flex; align-items: center; gap: 10px; padding: 11px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: var(--bg); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; color: var(--text); text-align: left; transition: all 0.12s; line-height: 1.5; }
+.choice:hover:not(:disabled) { background: var(--surface2); border-color: var(--border2); }
+.choice.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); font-weight: 500; }
+.choice.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+.choice:disabled { cursor: default; }
+.choice-letter { font-size: 12px; font-weight: 500; width: 20px; flex-shrink: 0; opacity: 0.5; }
+.feedback { display: none; margin-top: 12px; padding: 12px 16px; border-radius: var(--radius); font-size: 14px; line-height: 1.65; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.feedback.no { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+.action-row { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.btn { padding: 9px 20px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--surface); cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 500; color: var(--text); transition: all 0.14s; }
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--life); color: #fff; border-color: var(--life); }
+.btn.primary:hover { background: #0f3d26; }
+.score-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2rem; text-align: center; }
+.score-big { font-family: 'Fraunces', serif; font-size: 3.5rem; font-weight: 400; color: var(--life); line-height: 1; margin-bottom: 8px; }
+.score-sub { font-size: 15px; color: var(--text2); margin-bottom: 1rem; }
+.score-breakdown { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 1.5rem; }
+.score-cat { padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); font-size: 13px; }
+.score-cat-name { font-weight: 500; margin-bottom: 3px; }
+.score-cat-num { font-size: 18px; font-family: 'Fraunces', serif; }
+.score-msg { font-size: 14px; color: var(--text2); margin-bottom: 1.5rem; line-height: 1.6; max-width: 420px; margin-left: auto; margin-right: auto; }
+footer { text-align: center; margin-top: 3rem; font-size: 12px; color: var(--text3); }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <p class="eyebrow">Practice Quiz</p>
+    <h1>HiSET <em>Science</em> Practice</h1>
+    <p>24 questions · Life Science, Physical Science & Earth Science</p>
+  </header>
+
+  <div class="filter-bar">
+    <button class="filter-btn all active" onclick="setFilter('all',this)">All questions</button>
+    <button class="filter-btn life"  onclick="setFilter('life',this)">🌿 Life Science</button>
+    <button class="filter-btn phys"  onclick="setFilter('phys',this)">⚡ Physical Science</button>
+    <button class="filter-btn earth" onclick="setFilter('earth',this)">🌍 Earth Science</button>
+  </div>
+
+  <div class="progress-row">
+    <div class="prog-wrap"><div class="prog-fill" id="prog" style="width:0%"></div></div>
+    <span class="prog-label" id="prog-label">0 / 24</span>
+  </div>
+
+  <div id="q-container"></div>
+</div>
+<footer>HiSET Science Practice Quiz · Powered by Claude</footer>
+
+<script>
+const ALL = [
+  // ── LIFE SCIENCE ──
+  {
+    cat:'life', topic:'Cell structure',
+    source:'A scientist observes a cell under a microscope. The cell has a nucleus, mitochondria, and a cell wall, but no chloroplasts.',
+    sourceType:'Lab observation',
+    q:'Based on the observation, what type of cell is this most likely?',
+    choices:['An animal cell','A plant cell that grows underground and never receives sunlight','A bacterial (prokaryotic) cell','A fungal cell'],
+    answer:1,
+    explanation:'The cell has a nucleus (ruling out prokaryotes), a cell wall (ruling out animal cells), but no chloroplasts. Plant cells that don\'t receive light — like root cells — have cell walls but lack chloroplasts since they don\'t photosynthesize.'
+  },
+  {
+    cat:'life', topic:'Cell organelles',
+    source:null,
+    q:'Which organelle is responsible for producing energy (ATP) for the cell through cellular respiration?',
+    choices:['Nucleus','Ribosome','Mitochondria','Vacuole'],
+    answer:2,
+    explanation:'Mitochondria are the "powerhouse of the cell" — they convert glucose and oxygen into ATP (energy) through cellular respiration. This energy powers all cell functions.'
+  },
+  {
+    cat:'life', topic:'Photosynthesis',
+    source:'6CO₂ + 6H₂O + light energy → C₆H₁₂O₆ + 6O₂',
+    sourceType:'Chemical equation',
+    q:'What does this equation tell us about photosynthesis?',
+    choices:['Plants release carbon dioxide and absorb oxygen during photosynthesis','Plants use carbon dioxide and water to produce glucose and oxygen','Plants produce water and light energy from glucose','Plants absorb glucose from the soil and release carbon dioxide'],
+    answer:1,
+    explanation:'This equation shows that plants take in carbon dioxide (CO₂) and water (H₂O), use light energy, and produce glucose (sugar for energy) and oxygen — which is released as a byproduct. This is the opposite of what animals do in respiration.'
+  },
+  {
+    cat:'life', topic:'Genetics & heredity',
+    source:'A pea plant that is homozygous dominant for seed color (YY) is crossed with a plant that is homozygous recessive (yy). Yellow (Y) is dominant over green (y).',
+    sourceType:'Genetics scenario',
+    q:'What percentage of offspring from this cross will have yellow seeds?',
+    choices:['0% — all offspring will be green','25% — one in four will be yellow','75% — three in four will be yellow','100% — all offspring will be yellow'],
+    answer:3,
+    explanation:'A YY × yy cross produces all Yy offspring. Since Y (yellow) is dominant, all offspring will show the yellow phenotype — even though they carry one recessive allele. This is a basic monohybrid cross.'
+  },
+  {
+    cat:'life', topic:'Natural selection',
+    source:'In a population of beetles, some are green and some are brown. Birds eat the beetles. The field they live in is brown grass.',
+    sourceType:'Population scenario',
+    q:'Over many generations, what would natural selection most likely produce in this beetle population?',
+    choices:['An equal mix of green and brown beetles','Mostly brown beetles, because they are better camouflaged and more likely to survive and reproduce','Mostly green beetles, because green is a more common color in nature','All beetles would become one solid color chosen at random'],
+    answer:1,
+    explanation:'Brown beetles are better camouflaged in brown grass, so birds eat fewer of them. They survive longer, reproduce more, and pass on the brown trait. Over generations, the population shifts toward brown — this is natural selection in action.'
+  },
+  {
+    cat:'life', topic:'Ecosystems',
+    source:'Food chain: Grass → Grasshopper → Frog → Snake → Hawk',
+    sourceType:'Ecosystem diagram',
+    q:'If the frog population suddenly declined due to disease, what would most likely happen to the grasshopper population?',
+    choices:['The grasshopper population would decrease because frogs compete with them for food','The grasshopper population would increase because their main predator is gone','The grasshopper population would stay the same because snakes would eat more grasshoppers','The hawk population would increase because there are more grasshoppers to eat'],
+    answer:1,
+    explanation:'Frogs eat grasshoppers (frogs are predators, grasshoppers are prey). If frogs decline, fewer grasshoppers are eaten, so the grasshopper population increases. This is a classic predator-prey relationship in a food chain.'
+  },
+  {
+    cat:'life', topic:'Human body systems',
+    source:null,
+    q:'A person exercises vigorously. Their heart rate and breathing rate both increase. Which TWO body systems are working together to deliver more oxygen to muscles?',
+    choices:['Digestive and skeletal systems','Circulatory and respiratory systems','Nervous and endocrine systems','Muscular and immune systems'],
+    answer:1,
+    explanation:'The respiratory system brings in oxygen through faster breathing, and the circulatory system pumps that oxygen-rich blood to muscles faster through an increased heart rate. These two systems constantly work together to supply the body with oxygen.'
+  },
+  {
+    cat:'life', topic:'DNA & mutations',
+    source:null,
+    q:'A mutation occurs in a skin cell of an adult organism. Which statement about this mutation is most accurate?',
+    choices:['The mutation will be passed on to the organism\'s offspring','The mutation affects only that skin cell and cells that divide from it — not reproductive cells','The mutation will immediately cause cancer','The mutation will spread to all cells in the body through the bloodstream'],
+    answer:1,
+    explanation:'Mutations in body (somatic) cells only affect that cell line — they cannot be inherited by offspring. Only mutations in reproductive cells (sperm or egg) can be passed on. Most somatic mutations are harmless or repaired by the cell.'
+  },
+
+  // ── PHYSICAL SCIENCE ──
+  {
+    cat:'phys', topic:'Atomic structure',
+    source:null,
+    q:'An atom has 8 protons, 8 neutrons, and 8 electrons. What element is this, and what is its charge?',
+    choices:['Oxygen with a neutral charge','Oxygen with a positive charge','Nitrogen with a neutral charge','Carbon with a negative charge'],
+    answer:0,
+    explanation:'The number of protons determines the element — 8 protons = Oxygen. Since the number of protons equals the number of electrons (both 8), the charges cancel out and the atom is electrically neutral.'
+  },
+  {
+    cat:'phys', topic:'States of matter',
+    source:'A substance is heated from -20°C to 120°C at normal atmospheric pressure.',
+    sourceType:'Lab scenario',
+    q:'If this substance is water, which sequence of state changes would occur?',
+    choices:['Gas → Liquid → Solid','Solid → Liquid → Gas','Liquid → Solid → Gas','Gas → Solid → Liquid'],
+    answer:1,
+    explanation:'Water starts as ice (solid) below 0°C, melts into liquid water at 0°C, and boils into steam (gas) at 100°C. Heating causes matter to move from solid → liquid → gas as particles gain energy.'
+  },
+  {
+    cat:'phys', topic:'Chemical vs physical change',
+    source:null,
+    q:'Which of the following is a CHEMICAL change rather than a physical change?',
+    choices:['Cutting paper into small pieces','Ice melting into liquid water','Iron rusting when exposed to oxygen and moisture','Crushing a can to make it smaller'],
+    answer:2,
+    explanation:'Rusting is a chemical change — iron reacts with oxygen to form a new substance (iron oxide). The other options are physical changes: the substance stays the same, only its shape or state changes. A chemical change produces a new substance with different properties.'
+  },
+  {
+    cat:'phys', topic:'Newton\'s laws',
+    source:null,
+    q:'A soccer ball is sitting still on a field. A player kicks it and it rolls across the field. Which of Newton\'s laws BEST explains why the ball started moving?',
+    choices:['Newton\'s 1st Law — an object at rest stays at rest unless acted on by a force','Newton\'s 2nd Law — force equals mass times acceleration','Newton\'s 3rd Law — for every action there is an equal and opposite reaction','Newton\'s 1st Law — an object in motion stays in motion'],
+    answer:0,
+    explanation:'Newton\'s 1st Law (inertia) states that an object at rest stays at rest unless an unbalanced force acts on it. The ball was at rest; the kick provided an unbalanced force that caused it to move. The 1st Law explains both why it was still AND why it started moving.'
+  },
+  {
+    cat:'phys', topic:'Energy transfer',
+    source:'A metal spoon is placed in a hot bowl of soup. After a few minutes, the handle of the spoon becomes warm.',
+    sourceType:'Observation',
+    q:'Which method of heat transfer does this example demonstrate?',
+    choices:['Convection — heat transfer through fluid movement','Radiation — heat transfer through electromagnetic waves','Conduction — heat transfer through direct contact between materials','Evaporation — heat transfer through changing states of matter'],
+    answer:2,
+    explanation:'Conduction is heat transfer through direct physical contact between materials. Heat travels from the hot soup through the metal spoon to the cooler handle. Metals are excellent conductors, which is why metal spoons heat up quickly.'
+  },
+  {
+    cat:'phys', topic:'Acids & bases',
+    source:'A student tests several liquids with pH paper and records: Lemon juice = pH 2, Milk = pH 6.5, Pure water = pH 7, Baking soda = pH 9, Bleach = pH 13.',
+    sourceType:'Lab data table',
+    q:'Which of the following correctly describes the liquids tested?',
+    choices:['Lemon juice and milk are both bases; water is neutral','Lemon juice and milk are both acids; bleach is a base','Water and baking soda are both acids; lemon juice is a base','Bleach is neutral; lemon juice is the strongest acid tested'],
+    answer:1,
+    explanation:'pH below 7 = acid, pH 7 = neutral, pH above 7 = base. Lemon juice (pH 2) and milk (pH 6.5) are both below 7, making them acids. Bleach (pH 13) is well above 7, making it a strong base. Water (pH 7) is neutral.'
+  },
+  {
+    cat:'phys', topic:'Waves',
+    source:null,
+    q:'Which of the following is NOT a form of electromagnetic radiation?',
+    choices:['Visible light','X-rays','Sound waves','Radio waves'],
+    answer:2,
+    explanation:'Sound waves are mechanical waves — they require a medium (like air or water) to travel through and cannot travel in a vacuum. Electromagnetic waves (light, X-rays, radio waves) do not need a medium and can travel through empty space.'
+  },
+  {
+    cat:'phys', topic:'Conservation of mass',
+    source:'A scientist burns 10 grams of wood in a sealed container. After burning, she finds 2 grams of ash remaining.',
+    sourceType:'Lab scenario',
+    q:'Where did the other 8 grams go? Which law explains this?',
+    choices:['The mass disappeared — energy replaced it, as shown by Einstein\'s equation','The other 8 grams converted to gases (smoke, CO₂, water vapor) still in the sealed container — conservation of mass','The wood lost mass because burning destroys matter permanently','Mass was converted to heat energy and no longer exists as matter'],
+    answer:1,
+    explanation:'The Law of Conservation of Mass states that matter cannot be created or destroyed in a chemical reaction. The 8 "missing" grams became gases (carbon dioxide, water vapor, smoke) that stayed in the sealed container. Total mass before = total mass after.'
+  },
+
+  // ── EARTH SCIENCE ──
+  {
+    cat:'earth', topic:'Plate tectonics',
+    source:null,
+    q:'The Himalayan Mountains were formed when two tectonic plates collided. What type of plate boundary is this?',
+    choices:['Divergent boundary — plates moving apart','Transform boundary — plates sliding past each other','Convergent boundary — plates pushing together','Subduction zone — one plate sinking under another'],
+    answer:2,
+    explanation:'When two continental plates collide (convergent boundary), neither sinks — instead, the crust crumples upward, forming mountain ranges. The Himalayas formed when the Indian Plate collided with the Eurasian Plate millions of years ago.'
+  },
+  {
+    cat:'earth', topic:'Rock cycle',
+    source:'Diagram description: Magma cools → igneous rock → weathering & erosion → sediment → pressure & compaction → sedimentary rock → heat & pressure → metamorphic rock → melting → magma',
+    sourceType:'Rock cycle diagram',
+    q:'A piece of granite (igneous rock) is exposed at Earth\'s surface for millions of years. According to the rock cycle, what happens next?',
+    choices:['It melts back into magma immediately','Weathering and erosion break it into sediment, which can eventually form sedimentary rock','It transforms directly into metamorphic rock from sunlight','It dissolves completely into the ocean'],
+    answer:1,
+    explanation:'When igneous rocks are exposed at the surface, weathering (wind, water, temperature changes) and erosion break them into smaller particles called sediment. Over time, sediment can be compacted and cemented to form sedimentary rock.'
+  },
+  {
+    cat:'earth', topic:'Water cycle',
+    source:null,
+    q:'Which process in the water cycle directly causes clouds to form?',
+    choices:['Evaporation — water turning from liquid to gas','Condensation — water vapor cooling and turning into tiny water droplets','Precipitation — water falling from clouds as rain or snow','Transpiration — water released by plants into the air'],
+    answer:1,
+    explanation:'Clouds form through condensation — when water vapor rises, cools, and changes back into tiny liquid water droplets that cluster around small particles in the atmosphere. These droplets collect to form clouds.'
+  },
+  {
+    cat:'earth', topic:'Weather & climate',
+    source:'City A records temperatures and rainfall every day for 30 years. City B records the same data. City A averages 85°F in summer with frequent thunderstorms. City B averages 55°F year-round with frequent fog.',
+    sourceType:'Data description',
+    q:'What do these long-term patterns describe?',
+    choices:['The daily weather of each city','The climate of each city','The seasonal forecast for each city','The air quality index of each city'],
+    answer:1,
+    explanation:'Climate refers to the long-term average patterns of temperature and precipitation in a region over many years (typically 30+). Weather refers to day-to-day conditions. Because these are 30-year averages, they describe climate, not weather.'
+  },
+  {
+    cat:'earth', topic:'Greenhouse effect',
+    source:null,
+    q:'The greenhouse effect is a natural process that warms Earth. Human activities have intensified it by:',
+    choices:['Releasing large amounts of oxygen into the atmosphere through deforestation','Burning fossil fuels, which releases extra CO₂ and other greenhouse gases that trap more heat','Reducing the amount of water vapor in the atmosphere through irrigation','Increasing wind speeds that carry heat away from Earth\'s surface'],
+    answer:1,
+    explanation:'The natural greenhouse effect keeps Earth warm enough to support life. Human burning of fossil fuels adds extra CO₂ (and methane, nitrous oxide) to the atmosphere, trapping more heat than normal and causing average temperatures to rise — this is human-caused climate change.'
+  },
+  {
+    cat:'earth', topic:'Solar system',
+    source:null,
+    q:'Earth experiences seasons because:',
+    choices:['Earth\'s distance from the Sun changes significantly throughout the year','Earth\'s axis is tilted at about 23.5°, causing different parts of Earth to receive more direct sunlight at different times of year','The Sun produces more heat in summer and less in winter','Earth moves faster in its orbit during summer, receiving more energy'],
+    answer:1,
+    explanation:'Seasons are caused by Earth\'s axial tilt (23.5°), not its distance from the Sun. When the Northern Hemisphere tilts toward the Sun, it receives more direct sunlight → summer. Six months later, it tilts away → winter. Earth is actually slightly closer to the Sun in January (Northern Hemisphere winter).'
+  },
+  {
+    cat:'earth', topic:'Moon phases & tides',
+    source:null,
+    q:'Ocean tides are primarily caused by:',
+    choices:['Wind patterns pushing ocean water toward coastlines','The gravitational pull of the Moon (and to a lesser extent, the Sun) on Earth\'s oceans','Differences in water temperature between the equator and the poles','Earth\'s rotation spinning water outward toward the coasts'],
+    answer:1,
+    explanation:'The Moon\'s gravity pulls on Earth\'s oceans, creating a bulge of water on the side facing the Moon (high tide) and on the opposite side. As Earth rotates, different coastlines pass through these bulges, creating the cycle of high and low tides roughly twice a day.'
+  },
+  {
+    cat:'earth', topic:'Erosion & weathering',
+    source:null,
+    q:'The Grand Canyon was carved over millions of years by the Colorado River. This is an example of:',
+    choices:['Volcanic activity reshaping Earth\'s surface','Chemical weathering dissolving limestone rock','Erosion — the wearing away and removal of rock by moving water','Tectonic uplift pushing rock layers upward'],
+    answer:2,
+    explanation:'Erosion is the wearing away and transport of rock or soil by agents like water, wind, or ice. The Colorado River carried away rock particles over millions of years, carving the deep canyon. This is one of the most dramatic examples of water erosion on Earth.'
+  }
+];
+
+let activeFilter = 'all';
+let filtered = [...ALL];
+let current = 0;
+let answered = {};
+let totalAnswered = 0, totalCorrect = 0;
+let catCorrect = {life:0,phys:0,earth:0};
+let catTotal   = {life:0,phys:0,earth:0};
+
+function setFilter(f, btn) {
+  activeFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filtered = f === 'all' ? [...ALL] : ALL.filter(q => q.cat === f);
+  answered = {}; totalAnswered = 0; totalCorrect = 0;
+  catCorrect = {life:0,phys:0,earth:0}; catTotal = {life:0,phys:0,earth:0};
+  current = 0; render();
+}
+
+function updateProgress() {
+  document.getElementById('prog').style.width = (totalAnswered / filtered.length * 100) + '%';
+  document.getElementById('prog-label').textContent = totalAnswered + ' / ' + filtered.length;
+}
+
+function catLabel(c) {
+  return {life:'Life Science',phys:'Physical Science',earth:'Earth Science'}[c];
+}
+
+function render() {
+  updateProgress();
+  if (current >= filtered.length) { renderFinal(); return; }
+  const q = filtered[current];
+  const ans = answered[current];
+  let html = '<div class="q-card">';
+  html += '<div class="q-meta ' + q.cat + '">' + (current+1) + ' of ' + filtered.length + ' &nbsp;·&nbsp; ' + catLabel(q.cat) + ' — ' + q.topic + '</div>';
+  if (q.source) {
+    html += '<div class="source-box ' + q.cat + '"><div class="source-label">' + q.sourceType + '</div>' + q.source + '</div>';
+  }
+  html += '<div class="q-text">' + q.q + '</div><div class="choices">';
+  q.choices.forEach((c, ci) => {
+    let cls = 'choice';
+    if (ans !== undefined) {
+      if (ci === q.answer) cls += ' correct';
+      else if (ci === ans) cls += ' wrong';
+    }
+    html += '<button class="' + cls + '"' + (ans !== undefined ? ' disabled' : '') + ' onclick="pick(' + ci + ')">';
+    html += '<span class="choice-letter">' + String.fromCharCode(65+ci) + '</span>' + c + '</button>';
+  });
+  html += '</div>';
+  if (ans !== undefined) {
+    const ok = ans === q.answer;
+    html += '<div class="feedback show ' + (ok?'ok':'no') + '">' + (ok ? '✓ Correct! ' : '✗ Not quite — ') + q.explanation + '</div>';
+    html += '<div class="action-row">';
+    if (current < filtered.length - 1) html += '<button class="btn primary" onclick="goNext()">Next question →</button>';
+    else html += '<button class="btn primary" onclick="showFinal()">See my score →</button>';
+    html += '</div>';
+  }
+  html += '</div>';
+  document.getElementById('q-container').innerHTML = html;
+}
+
+function pick(ci) {
+  if (answered[current] !== undefined) return;
+  answered[current] = ci; totalAnswered++;
+  const q = filtered[current];
+  catTotal[q.cat]++;
+  if (ci === q.answer) { totalCorrect++; catCorrect[q.cat]++; }
+  render();
+}
+
+function goNext() { current++; render(); }
+function showFinal() { current = filtered.length; render(); }
+
+function renderFinal() {
+  const total = filtered.length;
+  const pct = Math.round(totalCorrect / total * 100);
+  const msg = pct >= 80 ? 'Excellent — you have a strong grasp of HiSET science concepts!' :
+              pct >= 60 ? 'Good effort! Review the explanations for missed questions and check the study guide.' :
+              'Keep going! Try filtering by one subject at a time to focus your studying.';
+  let breakdown = '';
+  if (activeFilter === 'all') {
+    breakdown = '<div class="score-breakdown">';
+    [{k:'life',l:'Life Science',c:'var(--life)'},{k:'phys',l:'Physical Science',c:'var(--phys)'},{k:'earth',l:'Earth Science',c:'var(--earth)'}].forEach(x => {
+      const sc = catTotal[x.k] > 0 ? catCorrect[x.k] + '/' + catTotal[x.k] : '—';
+      breakdown += '<div class="score-cat"><div class="score-cat-name">' + x.l + '</div><div class="score-cat-num" style="color:' + x.c + '">' + sc + '</div></div>';
+    });
+    breakdown += '</div>';
+  }
+  document.getElementById('q-container').innerHTML =
+    '<div class="score-card">' +
+    '<div class="score-big">' + totalCorrect + '/' + total + '</div>' +
+    '<div class="score-sub">questions correct (' + pct + '%)</div>' +
+    breakdown +
+    '<p class="score-msg">' + msg + '</p>' +
+    '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">' +
+    '<button class="btn primary" onclick="restart()">Start over</button>' +
+    '<button class="btn" onclick="window.location.href=\'hiset_science_study_guide.html\'">Open study guide →</button>' +
+    '</div></div>';
+}
+
+function restart() {
+  answered = {}; totalAnswered = 0; totalCorrect = 0;
+  catCorrect={life:0,phys:0,earth:0}; catTotal={life:0,phys:0,earth:0};
+  current = 0; render();
+}
+render();
+</script>
+</body>
+</html>
