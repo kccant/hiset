@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Map Reading Primer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f4f0e8;
+  --surface: #fdfaf4;
+  --surface2: #ece8de;
+  --border: #ddd8cc;
+  --border2: #ccc7b8;
+  --text: #1c1a14;
+  --text2: #5c5848;
+  --text3: #9c9888;
+  --geo: #5a3d7a;
+  --geo-light: #f0eaf8;
+  --geo-mid: #9a6abf;
+  --geo-border: #c0a0e0;
+  --accent2: #c45a2a;
+  --accent2-light: #faeee8;
+  --success-bg: #e8f5ee;
+  --success-text: #1a5c3a;
+  --success-border: #8ecfb0;
+  --radius: 10px;
+  --radius-lg: 16px;
+}
+a { color: inherit; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2.5rem 1rem 5rem;
+  line-height: 1.5;
+}
+.container { max-width: 720px; margin: 0 auto; }
+
+.back-link { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text2); text-decoration: none; margin-bottom: 1.5rem; }
+.back-link:hover { color: var(--geo); }
+.back-link:focus-visible { outline: 2px solid var(--geo); outline-offset: 3px; border-radius: 4px; }
+
+header { text-align: center; margin-bottom: 1.75rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text3); margin-bottom: 10px; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 7vw, 3rem); font-weight: 400; line-height: 1.1; margin-bottom: 12px; }
+header h1 em { font-style: italic; color: var(--geo); }
+header p { font-size: 14.5px; color: var(--text2); max-width: 540px; margin: 0 auto; }
+
+.header-meta { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-top: 1.25rem; }
+.meta-pill { font-size: 12px; color: var(--text2); background: var(--surface); border: 1px solid var(--border); border-radius: 99px; padding: 5px 14px; }
+
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.4rem 1.5rem; margin-bottom: 1.75rem; }
+.info-card-label { font-family: 'Fraunces', serif; font-size: 16px; font-style: italic; color: var(--geo); margin-bottom: 0.9rem; }
+.info-list { list-style: none; }
+.info-list li { position: relative; padding-left: 20px; margin-bottom: 0.7rem; font-size: 13.5px; color: var(--text2); }
+.info-list li:last-child { margin-bottom: 0; }
+.info-list li::before { content: "—"; position: absolute; left: 0; color: var(--geo-mid); }
+
+.expand-row { display: flex; justify-content: flex-end; margin-bottom: 0.75rem; }
+.expand-all-btn { background: none; border: 1px solid var(--border2); color: var(--text2); font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; padding: 6px 14px; border-radius: 99px; cursor: pointer; transition: all 0.15s; }
+.expand-all-btn:hover { background: var(--surface2); color: var(--text); }
+.expand-all-btn:focus-visible { outline: 2px solid var(--geo); outline-offset: 2px; }
+
+.topic-block { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 12px; overflow: hidden; }
+.topic-header { display: flex; justify-content: space-between; align-items: center; padding: 1.05rem 1.3rem; cursor: pointer; user-select: none; }
+.topic-header:focus-visible { outline: 2px solid var(--geo); outline-offset: -2px; }
+.topic-title { display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 15px; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--geo); flex-shrink: 0; }
+.chevron { color: var(--text3); transition: transform 0.2s; font-size: 13px; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+.topic-body { display: none; padding: 0 1.3rem 1.3rem; }
+.topic-block.open .topic-body { display: block; }
+
+.concepts-label, .videos-label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text3); margin-bottom: 8px; margin-top: 4px; }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.1rem; }
+.tag { font-size: 12px; background: var(--geo-light); color: var(--geo); border: 1px solid var(--geo-border); border-radius: 99px; padding: 4px 11px; }
+
+.video-links { display: flex; flex-direction: column; gap: 7px; margin-bottom: 1rem; }
+.video-link { display: flex; align-items: center; gap: 9px; padding: 9px 12px; background: var(--surface2); border-radius: var(--radius); text-decoration: none; color: var(--text); font-size: 13px; transition: background 0.15s; }
+.video-link:hover { background: var(--geo-light); }
+.video-link:focus-visible { outline: 2px solid var(--geo); outline-offset: 2px; }
+.vbadge { font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: 5px; flex-shrink: 0; white-space: nowrap; }
+.vbadge.ka { background: #e6ecf6; color: #1a3d6e; }
+.vbadge.yt { background: #fbe3e3; color: #a31616; }
+.vbadge.ng { background: #fff3da; color: #8a5a00; }
+.vlink-text { flex: 1; }
+.vlink-arrow { color: var(--text3); flex-shrink: 0; }
+
+.tip-box { background: var(--geo-light); border: 1px solid var(--geo-border); border-radius: var(--radius); padding: 0.85rem 1rem; font-size: 13px; color: var(--text); }
+.tip-box strong { color: var(--geo); }
+
+.cta-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 2rem; }
+.btn { display: inline-block; padding: 10px 18px; border-radius: 99px; font-family: 'DM Sans', sans-serif; font-size: 13px; font-weight: 500; text-decoration: none; border: 1px solid var(--border2); color: var(--text); background: var(--surface); transition: all 0.15s; }
+.btn:hover { background: var(--surface2); }
+.btn.primary { background: var(--geo); color: #fff; border-color: var(--geo); }
+.btn.primary:hover { background: #4a3164; }
+.btn:focus-visible { outline: 2px solid var(--geo); outline-offset: 2px; }
+
+footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 2.5rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron, .video-link, .btn, .expand-all-btn { transition: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+  <a class="back-link" href="hiset_social_studies_guide.html">← Back to Social Studies guide</a>
+
+  <header>
+    <div class="eyebrow">HiSET Social Studies · Geography</div>
+    <h1>Map Reading <em>Primer</em></h1>
+    <p>Maps account for roughly 10% of the Social Studies test on paper — but the skill of reading one correctly shows up everywhere else too. Five things to master, with practice questions at the end.</p>
+    <div class="header-meta">
+      <span class="meta-pill">5 core skills</span>
+      <span class="meta-pill">Sample maps, not memorization</span>
+      <span class="meta-pill">13 practice questions</span>
+    </div>
+  </header>
+
+  <div class="info-card">
+    <div class="info-card-label">How HiSET actually tests this</div>
+    <ul class="info-list">
+      <li>You won't be asked to name capitals from memory. Most map questions show an unfamiliar map — often invented just for the test — and ask you to read it correctly.</li>
+      <li>Almost every question tests one of two things: can you find a fact the map literally states, or can you draw a conclusion the map actually supports.</li>
+      <li>Wrong answers are almost always reasonable-sounding statements the map doesn't actually prove. Catching that gap is the real skill being measured.</li>
+    </ul>
+  </div>
+
+  <div class="expand-row">
+    <button class="expand-all-btn" onclick="toggleAll()" id="expandBtn">Expand all ⌄</button>
+  </div>
+
+  <div class="topic-block" id="t1">
+    <div class="topic-header" onclick="toggle('t1')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('t1');}">
+      <span class="topic-title"><span class="topic-dot"></span>Types of maps</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concepts-label">Key concepts</div>
+      <div class="concept-tags">
+        <span class="tag">Political maps</span><span class="tag">Physical maps</span><span class="tag">Thematic maps</span><span class="tag">Road &amp; historical maps</span><span class="tag">Reading the title &amp; purpose</span>
+      </div>
+      <div class="videos-label">Video &amp; reading resources</div>
+      <div class="video-links">
+        <a class="video-link" href="https://www.youtube.com/watch?v=iHEMOdRo5u8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">Reference maps vs. thematic maps — Crash Course Geography #2</span><span class="vlink-arrow">↗</span></a>
+        <a class="video-link" href="https://www.khanacademy.org/humanities/ap-art-history/start-here-apah/brief-histories-apah/a/what-maps-tell-us2" target="_blank"><span class="vbadge ka">Khan Academy</span><span class="vlink-text">What maps tell us — reading a map's purpose</span><span class="vlink-arrow">↗</span></a>
+      </div>
+      <div class="tip-box"><strong>Test tip:</strong> Identify the map type before you read the question. A political map question is about borders and government; a thematic map question is about comparing data across regions. Knowing which kind of map you're looking at tells you what kind of answer to look for.</div>
+    </div>
+  </div>
+
+  <div class="topic-block" id="t2">
+    <div class="topic-header" onclick="toggle('t2')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('t2');}">
+      <span class="topic-title"><span class="topic-dot"></span>Map tools: legend, scale &amp; compass</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concepts-label">Key concepts</div>
+      <div class="concept-tags">
+        <span class="tag">Legend / key</span><span class="tag">Map scale</span><span class="tag">Compass rose</span><span class="tag">Cardinal &amp; intermediate directions</span><span class="tag">Grid lines</span>
+      </div>
+      <div class="videos-label">Video &amp; reading resources</div>
+      <div class="video-links">
+        <a class="video-link" href="https://www.youtube.com/watch?v=sgxwk6M-WiE" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">How to calculate real-world distance using a map scale</span><span class="vlink-arrow">↗</span></a>
+        <a class="video-link" href="https://education.nationalgeographic.org/resource/measuring-distances-on-a-map/" target="_blank"><span class="vbadge ng">Nat Geo</span><span class="vlink-text">Measuring distances on a map — practice walkthrough</span><span class="vlink-arrow">↗</span></a>
+      </div>
+      <div class="tip-box"><strong>Test tip:</strong> Always check the legend before answering — a symbol or shade doesn't mean the same thing on every map. If a question asks about distance, find the scale bar first; HiSET problems are built so the math works out cleanly once you've found the right scale.</div>
+    </div>
+  </div>
+
+  <div class="topic-block" id="t3">
+    <div class="topic-header" onclick="toggle('t3')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('t3');}">
+      <span class="topic-title"><span class="topic-dot"></span>Latitude &amp; longitude</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concepts-label">Key concepts</div>
+      <div class="concept-tags">
+        <span class="tag">Parallels (latitude)</span><span class="tag">Meridians (longitude)</span><span class="tag">Equator &amp; Prime Meridian</span><span class="tag">Hemispheres</span><span class="tag">Coordinates</span>
+      </div>
+      <div class="videos-label">Video &amp; reading resources</div>
+      <div class="video-links">
+        <a class="video-link" href="https://www.nationalgeographic.org/activity/introduction-latitude-longitude/" target="_blank"><span class="vbadge ng">Nat Geo</span><span class="vlink-text">Introduction to latitude and longitude</span><span class="vlink-arrow">↗</span></a>
+        <a class="video-link" href="https://www.geographyrealm.com/latitude-longitude/" target="_blank"><span class="vbadge ng">Reading</span><span class="vlink-text">Latitude and longitude explained, with worked examples</span><span class="vlink-arrow">↗</span></a>
+      </div>
+      <div class="tip-box"><strong>Test tip:</strong> Latitude lines run horizontally, like rungs of a ladder, and measure how far north or south you are. Longitude lines run vertically and measure how far east or west you are. A single point can sit in two hemispheres at once — 40°N, 90°W is in both the Northern and Western Hemispheres.</div>
+    </div>
+  </div>
+
+  <div class="topic-block" id="t4">
+    <div class="topic-header" onclick="toggle('t4')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('t4');}">
+      <span class="topic-title"><span class="topic-dot"></span>Thematic &amp; choropleth maps</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concepts-label">Key concepts</div>
+      <div class="concept-tags">
+        <span class="tag">Choropleth shading</span><span class="tag">Population density maps</span><span class="tag">Election &amp; data maps</span><span class="tag">Comparing regions</span><span class="tag">Dot-density &amp; cartogram maps</span>
+      </div>
+      <div class="videos-label">Video &amp; reading resources</div>
+      <div class="video-links">
+        <a class="video-link" href="https://www.youtube.com/watch?v=iHEMOdRo5u8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">How shaded data maps can shape — or skew — perception</span><span class="vlink-arrow">↗</span></a>
+      </div>
+      <div class="tip-box"><strong>Test tip:</strong> On a shaded (choropleth) map, the legend tells you what each shade level means — darker usually means "more," but confirm with the legend rather than assuming. Compare regions by their actual shade, not by how large they look on the page.</div>
+    </div>
+  </div>
+
+  <div class="topic-block" id="t5">
+    <div class="topic-header" onclick="toggle('t5')" tabindex="0" role="button" aria-expanded="false" onkeydown="if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle('t5');}">
+      <span class="topic-title"><span class="topic-dot"></span>Drawing conclusions without overreaching</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body">
+      <div class="concepts-label">Key concepts</div>
+      <div class="concept-tags">
+        <span class="tag">Stated vs. inferred</span><span class="tag">Common overreach traps</span><span class="tag">Connecting maps to history &amp; civics</span><span class="tag">Cause &amp; effect patterns</span>
+      </div>
+      <div class="videos-label">Video &amp; reading resources</div>
+      <div class="video-links">
+        <a class="video-link" href="https://www.youtube.com/watch?v=xDi-Lo0xOr8" target="_blank"><span class="vbadge yt">YouTube</span><span class="vlink-text">How a map's choices shape what conclusions it supports — Crash Course Geography #35</span><span class="vlink-arrow">↗</span></a>
+      </div>
+      <div class="tip-box"><strong>Test tip:</strong> A map only supports conclusions about what it actually shows. A map of river locations can support a conclusion about water access — it can't support a conclusion about why a war happened. Watch for answer choices that sound reasonable but go beyond what's on the map.</div>
+    </div>
+  </div>
+
+  <div class="cta-row">
+    <a class="btn primary" href="hiset_map_reading_practice.html">Practice map questions →</a>
+    <a class="btn" href="hiset_social_studies_guide.html">Back to Social Studies guide</a>
+    <a class="btn" href="index.html">Back to study hub</a>
+  </div>
+
+  <footer>HiSET Map Reading Primer · All video and reading links open free outside resources · Powered by Claude</footer>
+</div>
+
+<script>
+function toggle(id) {
+  var block = document.getElementById(id);
+  block.classList.toggle('open');
+  var header = block.querySelector('.topic-header');
+  header.setAttribute('aria-expanded', block.classList.contains('open'));
+}
+function toggleAll() {
+  var blocks = document.querySelectorAll('.topic-block');
+  var btn = document.getElementById('expandBtn');
+  var anyClosed = Array.prototype.some.call(blocks, function(b){ return !b.classList.contains('open'); });
+  blocks.forEach(function(b){
+    if (anyClosed) { b.classList.add('open'); } else { b.classList.remove('open'); }
+    b.querySelector('.topic-header').setAttribute('aria-expanded', b.classList.contains('open'));
+  });
+  btn.textContent = anyClosed ? 'Collapse all ⌃' : 'Expand all ⌄';
+}
+</script>
+</body>
+</html>
