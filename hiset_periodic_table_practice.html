@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Periodic Table Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f4f0; --surface: #f8fbf8; --surface2: #e4ece4;
+  --border: #ccd8cc; --border2: #b8ccb8;
+  --text: #141c14; --text2: #485448; --text3: #889088;
+  --phys: #1a3d6e; --phys-light: #e6ecf6; --phys-border: #a0bcdc;
+  --earth: #6b3d12; --earth-light: #f5ece0; --earth-border: #d4a870;
+  --success-bg: #e6f2ec; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; line-height: 1.5; }
+.container { max-width: 760px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 1.75rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--phys); margin-bottom: 10px; font-weight: 600; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.7rem, 5.2vw, 2.5rem); font-weight: 400; line-height: 1.16; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--phys); }
+header p { font-size: 14px; color: var(--text2); max-width: 520px; margin: 0 auto; }
+
+.progress-wrap { display: flex; align-items: center; gap: 12px; margin: 1.5rem 0 2rem; }
+.progress-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); white-space: nowrap; }
+.progress-track { flex: 1; height: 5px; background: var(--surface2); border-radius: 99px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--phys), #4a85c8); width: 0%; transition: width .35s ease; }
+
+.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 1.5rem; overflow: hidden; }
+.card-head { padding: 1.4rem 1.4rem 0; }
+.card-kicker { font-family: 'DM Mono', monospace; font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--phys); font-weight: 600; }
+.card-title { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 600; margin: .3rem 0 .25rem; }
+.card-sub { font-size: 13px; color: var(--text2); }
+.tip-box { margin: .9rem 1.4rem 0; padding: .7rem .9rem; background: var(--earth-light); border-left: 3px solid var(--earth-border); border-radius: 6px; font-size: 12.5px; color: var(--earth); line-height: 1.55; }
+.tip-box b { color: var(--earth); }
+.visual-wrap { padding: 1.2rem 1.4rem .2rem; display: flex; justify-content: center; }
+
+/* big element box */
+.bigbox-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.bigbox { width: 130px; height: 130px; border-radius: 8px; border: 1px solid rgba(0,0,0,.1); display: flex; flex-direction: column; justify-content: space-between; padding: 8px 10px; font-family: 'DM Mono', monospace; }
+.bigbox .num { font-size: 13px; opacity: .75; }
+.bigbox .sym { font-size: 34px; font-weight: 700; text-align: center; line-height: 1; }
+.bigbox .name { font-size: 10.5px; text-align: center; color: var(--text2); font-family: 'DM Sans', sans-serif; }
+.bigbox .mass { font-size: 11px; text-align: center; }
+
+/* mini periodic table */
+.ptable { display: grid; grid-template-columns: repeat(18, minmax(20px, 1fr)); gap: 2px; overflow-x: auto; max-width: 100%; }
+.el { aspect-ratio: 1; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-family: 'DM Mono', monospace; font-size: 9px; font-weight: 700; min-width: 20px; border: 1px solid rgba(0,0,0,.06); }
+.cat-alkali { background: #f7d2c4; } .cat-alkearth { background: #f7e3b8; }
+.cat-transition { background: #c7d6ee; } .cat-posttrans { background: #d6e0e8; }
+.cat-metalloid { background: #d9c9ee; } .cat-nonmetal { background: #c9e8d0; }
+.cat-halogen { background: #f5e28a; } .cat-noble { background: #cbe4ee; }
+.el.dim { opacity: .18; }
+.el.hl-a { outline: 2.5px solid #b8461f; outline-offset: 1px; }
+.el.hl-b { outline: 2.5px solid #1a3d6e; outline-offset: 1px; }
+
+.qs { padding: 1rem 1.4rem 1.5rem; }
+.q { border-top: 1px dashed var(--border2); padding: 1rem 0; }
+.q:first-child { border-top: none; }
+.q-text { font-size: 14px; font-weight: 500; margin-bottom: .65rem; }
+.opts { display: flex; flex-direction: column; gap: 6px; }
+.opt { text-align: left; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px; padding: 8px 12px; font-family: inherit; font-size: 13.5px; color: var(--text); cursor: pointer; transition: all .12s; }
+.opt:hover:not(:disabled) { background: var(--surface2); }
+.opt.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); font-weight: 600; }
+.opt.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); font-weight: 600; }
+.opt:disabled { cursor: default; }
+.explain { margin-top: 8px; font-size: 12.5px; line-height: 1.55; color: var(--text2); background: var(--surface2); padding: 8px 12px; border-radius: 6px; display: none; }
+.explain.show { display: block; }
+
+.score-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 2.25rem 1.5rem; text-align: center; }
+.score-num { font-family: 'Fraunces', serif; font-size: 2.6rem; color: var(--phys); font-weight: 600; }
+.score-sub { font-size: 13px; color: var(--text2); margin: .3rem 0 1.1rem; }
+.reset-btn { font-family: 'DM Mono', monospace; font-size: 12px; letter-spacing: .05em; text-transform: uppercase; background: var(--phys); color: #fff; border: none; border-radius: 99px; padding: .65rem 1.5rem; cursor: pointer; }
+.reset-btn:hover { background: #12315c; }
+
+footer { text-align: center; font-size: 11.5px; color: var(--text3); margin-top: 2rem; }
+@media (max-width: 480px) { .card-head, .visual-wrap, .qs { padding-left: 1rem; padding-right: 1rem; } .tip-box { margin-left: 1rem; margin-right: 1rem; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">HiSET Science · Physical Science</div>
+    <h1>Periodic table practice: <em>read it, don't memorize it.</em></h1>
+    <p>Six short exercises, each with its own piece of the table to read — element boxes, families, and categories — the same way the real test hands you a fragment and asks what it means.</p>
+  </header>
+
+  <div class="progress-wrap">
+    <div class="progress-label" id="progress-label">0 / 12 answered</div>
+    <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+
+  <div id="cards"></div>
+  <div id="score-area"></div>
+
+  <footer>HiSET Study Hub · Periodic Table Practice · works offline once downloaded</footer>
+</div>
+
+<script>
+// ---- shared element data (periods 1-4) ----
+const elements = [
+  {n:1,s:'H',name:'Hydrogen',m:'1.01',cat:'nonmetal',col:1,row:1},
+  {n:2,s:'He',name:'Helium',m:'4.00',cat:'noble',col:18,row:1},
+  {n:3,s:'Li',name:'Lithium',m:'6.94',cat:'alkali',col:1,row:2},
+  {n:4,s:'Be',name:'Beryllium',m:'9.01',cat:'alkearth',col:2,row:2},
+  {n:5,s:'B',name:'Boron',m:'10.81',cat:'metalloid',col:13,row:2},
+  {n:6,s:'C',name:'Carbon',m:'12.01',cat:'nonmetal',col:14,row:2},
+  {n:7,s:'N',name:'Nitrogen',m:'14.01',cat:'nonmetal',col:15,row:2},
+  {n:8,s:'O',name:'Oxygen',m:'16.00',cat:'nonmetal',col:16,row:2},
+  {n:9,s:'F',name:'Fluorine',m:'19.00',cat:'halogen',col:17,row:2},
+  {n:10,s:'Ne',name:'Neon',m:'20.18',cat:'noble',col:18,row:2},
+  {n:11,s:'Na',name:'Sodium',m:'22.99',cat:'alkali',col:1,row:3},
+  {n:12,s:'Mg',name:'Magnesium',m:'24.31',cat:'alkearth',col:2,row:3},
+  {n:13,s:'Al',name:'Aluminum',m:'26.98',cat:'posttrans',col:13,row:3},
+  {n:14,s:'Si',name:'Silicon',m:'28.09',cat:'metalloid',col:14,row:3},
+  {n:15,s:'P',name:'Phosphorus',m:'30.97',cat:'nonmetal',col:15,row:3},
+  {n:16,s:'S',name:'Sulfur',m:'32.07',cat:'nonmetal',col:16,row:3},
+  {n:17,s:'Cl',name:'Chlorine',m:'35.45',cat:'halogen',col:17,row:3},
+  {n:18,s:'Ar',name:'Argon',m:'39.95',cat:'noble',col:18,row:3},
+  {n:19,s:'K',name:'Potassium',m:'39.10',cat:'alkali',col:1,row:4},
+  {n:20,s:'Ca',name:'Calcium',m:'40.08',cat:'alkearth',col:2,row:4},
+  {n:21,s:'Sc',name:'Scandium',m:'44.96',cat:'transition',col:3,row:4},
+  {n:22,s:'Ti',name:'Titanium',m:'47.87',cat:'transition',col:4,row:4},
+  {n:23,s:'V',name:'Vanadium',m:'50.94',cat:'transition',col:5,row:4},
+  {n:24,s:'Cr',name:'Chromium',m:'52.00',cat:'transition',col:6,row:4},
+  {n:25,s:'Mn',name:'Manganese',m:'54.94',cat:'transition',col:7,row:4},
+  {n:26,s:'Fe',name:'Iron',m:'55.85',cat:'transition',col:8,row:4},
+  {n:27,s:'Co',name:'Cobalt',m:'58.93',cat:'transition',col:9,row:4},
+  {n:28,s:'Ni',name:'Nickel',m:'58.69',cat:'transition',col:10,row:4},
+  {n:29,s:'Cu',name:'Copper',m:'63.55',cat:'transition',col:11,row:4},
+  {n:30,s:'Zn',name:'Zinc',m:'65.38',cat:'transition',col:12,row:4},
+  {n:31,s:'Ga',name:'Gallium',m:'69.72',cat:'posttrans',col:13,row:4},
+  {n:32,s:'Ge',name:'Germanium',m:'72.63',cat:'metalloid',col:14,row:4},
+  {n:33,s:'As',name:'Arsenic',m:'74.92',cat:'metalloid',col:15,row:4},
+  {n:34,s:'Se',name:'Selenium',m:'78.97',cat:'nonmetal',col:16,row:4},
+  {n:35,s:'Br',name:'Bromine',m:'79.90',cat:'halogen',col:17,row:4},
+  {n:36,s:'Kr',name:'Krypton',m:'83.80',cat:'noble',col:18,row:4},
+];
+const byNum = n => elements.find(e=>e.n===n);
+
+function bigBox(nums){
+  return `<div class="bigbox-row">${nums.map(n=>{
+    const e = byNum(n);
+    return `<div class="bigbox cat-${e.cat}">
+      <span class="num">${e.n}</span>
+      <span class="sym">${e.s}</span>
+      <span class="name">${e.name}</span>
+      <span class="mass">${e.m}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function miniTable(hlA=[], hlB=[]){
+  return `<div class="ptable">${elements.map(e=>{
+    let cls = `el cat-${e.cat}`;
+    if(hlA.includes(e.n)) cls += ' hl-a';
+    else if(hlB.includes(e.n)) cls += ' hl-b';
+    else if(hlA.length || hlB.length) cls += ' dim';
+    return `<div class="${cls}" style="grid-column:${e.col};grid-row:${e.row}">${e.s}</div>`;
+  }).join('')}</div>`;
+}
+
+const exercises = [
+  {
+    kicker: "Reading one box",
+    title: "What a Single Box Tells You",
+    sub: "Carbon's box, pulled straight from the table.",
+    tip: "<b>Atomic number = protons = electrons</b> (in a neutral atom). Ignore the mass for these two questions — it isn't needed.",
+    visual: bigBox([6]),
+    questions: [
+      {q:"How many protons does an atom of carbon have?", opts:["4","6","12","14"], correct:1,
+       explain:"Carbon's atomic number is 6, shown at the top of its box — and the atomic number is always the proton count."},
+      {q:"How many electrons does a neutral atom of carbon have?", opts:["6","8","12","0"], correct:0,
+       explain:"In a neutral atom, the number of electrons always equals the number of protons — both are 6 for carbon."}
+    ]
+  },
+  {
+    kicker: "Reading one box — math",
+    title: "Counting Neutrons",
+    sub: "Two boxes this time. Same rule, different numbers.",
+    tip: "<b>Neutrons ≈ atomic mass − atomic number.</b> Round the mass to the nearest whole number first, then subtract.",
+    visual: bigBox([26,19]),
+    questions: [
+      {q:"Iron's atomic number is 26 and its atomic mass is 55.85. About how many neutrons does an atom of iron have?", opts:["26","30","56","82"], correct:1,
+       explain:"Round 55.85 to 56, then subtract the atomic number: 56 − 26 = 30 neutrons."},
+      {q:"Potassium's atomic number is 19 and its atomic mass is 39.10. About how many neutrons does an atom of potassium have?", opts:["19","20","39","58"], correct:1,
+       explain:"Round 39.10 to 39, then subtract: 39 − 19 = 20 neutrons."}
+    ]
+  },
+  {
+    kicker: "Families & columns",
+    title: "Same Column, Same Behavior",
+    sub: "Column 1 highlighted — lithium, sodium, and potassium.",
+    tip: "Elements in the <b>same column (group)</b> tend to share chemical behavior, even if you've never heard of the specific element before.",
+    visual: miniTable([3,11,19]),
+    questions: [
+      {q:"What family do the three highlighted elements belong to?", opts:["Noble gases","Alkali metals","Halogens","Transition metals"], correct:1,
+       explain:"Li, Na, and K sit in column 1 — the alkali metals, known for being soft and highly reactive."},
+      {q:"Rubidium sits directly below potassium in this same column (though it isn't shown here). Based on the pattern, rubidium is most likely to be:", opts:["An unreactive noble gas","A soft, highly reactive metal","A metalloid","A reactive nonmetal gas"], correct:1,
+       explain:"Sharing a column with lithium, sodium, and potassium means rubidium is another alkali metal — soft and highly reactive, following the same family pattern."}
+    ]
+  },
+  {
+    kicker: "Categories",
+    title: "Metal, Nonmetal, or Metalloid?",
+    sub: "Two elements marked on the table — silicon and argon.",
+    tip: "Location tells you the category: the staircase between boron and astatine marks the <b>metalloids</b>; the far-right column (minus the last) holds <b>nonmetals</b>; the last column holds the <b>noble gases</b>.",
+    visual: miniTable([14],[18]),
+    questions: [
+      {q:"Silicon (orange-outlined) sits right on the staircase between the metals and nonmetals. What category is it?", opts:["Alkali metal","Metalloid","Halogen","Noble gas"], correct:1,
+       explain:"Silicon sits on the metalloid staircase, along with boron, germanium, and arsenic — elements with a mix of metal and nonmetal properties."},
+      {q:"Argon (blue-outlined) sits in the very last column. What category is it?", opts:["Halogen","Alkaline earth metal","Noble gas","Transition metal"], correct:2,
+       explain:"The last column (18) is always the noble gases — argon, like neon and krypton, is chemically almost inert."}
+    ]
+  },
+  {
+    kicker: "Putting families together",
+    title: "Halogens Meet Alkali Metals",
+    sub: "Column 1 (orange) and column 17 (blue) — the two families that pair up to make salts.",
+    tip: "Table salt is sodium (column 1) plus chlorine (column 17). That pairing isn't a coincidence — it's how the whole family works.",
+    visual: miniTable([3,11,19],[9,17,35]),
+    questions: [
+      {q:"Which pairing below would most likely form a compound similar to table salt (NaCl)?", opts:["Potassium (K) + Bromine (Br)","Calcium (Ca) + Magnesium (Mg)","Neon (Ne) + Argon (Ar)","Carbon (C) + Oxygen (O)"], correct:0,
+       explain:"K is an alkali metal (column 1) and Br is a halogen (column 17) — the same family pairing as sodium and chlorine in table salt."},
+      {q:"Why do alkali metals and halogens so readily bond with each other?", opts:["They have identical atomic masses","Alkali metals give up an electron easily; halogens readily take one", "Both families are chemically unreactive", "They're always found in the same period"], correct:1,
+       explain:"Alkali metals hold their outermost electron loosely and give it up easily, while halogens are just one electron short of a full outer shell and grab one readily — that exchange is what forms the bond."}
+    ]
+  },
+  {
+    kicker: "The exception",
+    title: "Noble Gases",
+    sub: "Column 18, the whole way down — helium, neon, argon, krypton.",
+    tip: "Noble gases already have a full outer shell, so they have little reason to react with anything — the opposite situation from alkali metals and halogens.",
+    visual: miniTable([2,10,18,36]),
+    questions: [
+      {q:"What is this family of elements called?", opts:["Halogens","Metalloids","Noble gases","Alkaline earth metals"], correct:2,
+       explain:"Column 18 is always the noble gases — He, Ne, Ar, and Kr are shown here."},
+      {q:"Xenon sits further down this same column (not shown). Based on the pattern, xenon is most likely to be:", opts:["A highly reactive metal","An extremely unreactive gas","A reactive nonmetal gas","A metalloid"], correct:1,
+       explain:"Sharing column 18 with helium, neon, argon, and krypton means xenon follows the same noble-gas pattern — a gas that barely reacts with anything."}
+    ]
+  }
+];
+
+let answered = {};
+const totalQ = exercises.reduce((s,e)=>s+e.questions.length,0);
+
+function render(){
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  exercises.forEach((ex, ei)=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-head">
+        <div class="card-kicker">${ex.kicker}</div>
+        <div class="card-title">${ex.title}</div>
+        <div class="card-sub">${ex.sub}</div>
+      </div>
+      <div class="tip-box">${ex.tip}</div>
+      <div class="visual-wrap">${ex.visual}</div>
+      <div class="qs">
+        ${ex.questions.map((q,qi)=>`
+          <div class="q">
+            <div class="q-text">${qi+1}. ${q.q}</div>
+            <div class="opts" id="opts-${ei}-${qi}">
+              ${q.opts.map((o,oi)=>`<button class="opt" data-ei="${ei}" data-qi="${qi}" data-oi="${oi}">${o}</button>`).join('')}
+            </div>
+            <div class="explain" id="explain-${ei}-${qi}">${q.explain}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+    container.appendChild(card);
+  });
+  document.querySelectorAll('.opt').forEach(btn=> btn.addEventListener('click', handleAnswer));
+  renderScoreArea();
+}
+
+function handleAnswer(e){
+  const btn = e.currentTarget;
+  const ei = +btn.dataset.ei, qi = +btn.dataset.qi, oi = +btn.dataset.oi;
+  const key = ei+'-'+qi;
+  if(answered[key] !== undefined) return;
+  const correct = exercises[ei].questions[qi].correct;
+  answered[key] = (oi === correct);
+
+  const optsWrap = document.getElementById(`opts-${ei}-${qi}`);
+  [...optsWrap.children].forEach((b,idx)=>{
+    b.disabled = true;
+    if(idx === correct) b.classList.add('correct');
+    else if(idx === oi) b.classList.add('wrong');
+  });
+  document.getElementById(`explain-${ei}-${qi}`).classList.add('show');
+  updateProgress();
+  renderScoreArea();
+}
+
+function updateProgress(){
+  const done = Object.keys(answered).length;
+  document.getElementById('progress-label').textContent = `${done} / ${totalQ} answered`;
+  document.getElementById('progress-fill').style.width = (done/totalQ*100)+'%';
+}
+
+function renderScoreArea(){
+  const area = document.getElementById('score-area');
+  const done = Object.keys(answered).length;
+  if(done < totalQ){ area.innerHTML=''; return; }
+  const right = Object.values(answered).filter(Boolean).length;
+  area.innerHTML = `
+    <div class="score-card">
+      <div class="score-num">${right} / ${totalQ}</div>
+      <div class="score-sub">${right===totalQ ? "Every box, family, and category read correctly." : "Review the explanations above on anything you missed, then try again."}</div>
+      <button class="reset-btn" onclick="resetAll()">Start over</button>
+    </div>
+  `;
+}
+
+function resetAll(){
+  answered = {};
+  render();
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+render();
+updateProgress();
+</script>
+</body>
+</html>
