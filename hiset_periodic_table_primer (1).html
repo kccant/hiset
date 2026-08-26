@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Periodic Table Primer</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f0f4f0; --surface: #f8fbf8; --surface2: #e4ece4;
+  --border: #ccd8cc; --border2: #b8ccb8;
+  --text: #141c14; --text2: #485448; --text3: #889088;
+  --life: #1a5c3a; --life-light: #e6f2ec; --life-border: #8ecfb0;
+  --phys: #1a3d6e; --phys-light: #e6ecf6; --phys-border: #a0bcdc;
+  --earth: #6b3d12; --earth-light: #f5ece0; --earth-border: #d4a870;
+  --success-bg: #e6f2ec; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; line-height: 1.5; }
+.container { max-width: 760px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 2.25rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--phys); margin-bottom: 10px; font-weight: 600; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 5.5vw, 2.7rem); font-weight: 400; line-height: 1.16; margin-bottom: 12px; }
+header h1 em { font-style: italic; color: var(--phys); }
+header p { font-size: 14.5px; color: var(--text2); max-width: 540px; margin: 0 auto; }
+
+/* ── LEGEND / TABLE ── */
+.table-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 1.5rem 1.25rem; margin-bottom: 2.25rem;
+}
+.table-card h2 { font-family: 'Fraunces', serif; font-size: 1.15rem; font-weight: 600; margin-bottom: .3rem; }
+.table-card > p { font-size: 13px; color: var(--text2); margin-bottom: 1.1rem; }
+.ptable {
+  display: grid; grid-template-columns: repeat(18, minmax(28px, 1fr)); gap: 3px;
+  overflow-x: auto; padding-bottom: 4px;
+}
+.el {
+  aspect-ratio: 1; border-radius: 4px; padding: 2px 3px; font-family: 'DM Mono', monospace;
+  display: flex; flex-direction: column; justify-content: space-between; min-width: 28px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+.el .num { font-size: 6.5px; opacity: .75; line-height: 1; }
+.el .sym { font-size: 12px; font-weight: 700; text-align: center; line-height: 1; }
+.el .mass { font-size: 5.5px; opacity: .7; text-align: center; line-height: 1; }
+.cat-alkali { background: #f7d2c4; }
+.cat-alkearth { background: #f7e3b8; }
+.cat-transition { background: #c7d6ee; }
+.cat-posttrans { background: #d6e0e8; }
+.cat-metalloid { background: #d9c9ee; }
+.cat-nonmetal { background: #c9e8d0; }
+.cat-halogen { background: #f5e28a; }
+.cat-noble { background: #cbe4ee; }
+.legend { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 1rem; font-size: 11.5px; color: var(--text2); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.table-note { margin-top: 1rem; font-size: 12.5px; color: var(--text3); }
+
+/* ── ACCORDION ── */
+.topic-block {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  margin-bottom: 12px; cursor: pointer; overflow: hidden;
+}
+.topic-header {
+  display: flex; align-items: center; justify-content: space-between; padding: 1rem 1.25rem;
+}
+.topic-title { font-family: 'Fraunces', serif; font-size: 16.5px; font-weight: 600; display: flex; align-items: center; gap: 10px; }
+.topic-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--phys); flex-shrink: 0; }
+.chevron { color: var(--text3); transition: transform .18s; font-size: 13px; }
+.topic-block.open .chevron { transform: rotate(180deg); }
+.topic-body { max-height: 0; overflow: hidden; transition: max-height .25s ease; }
+.topic-block.open .topic-body { max-height: 1400px; }
+.topic-body-inner { padding: 0 1.25rem 1.25rem; }
+.topic-body-inner p { font-size: 14px; color: var(--text2); margin-bottom: .7rem; }
+.topic-body-inner p:last-child { margin-bottom: 0; }
+.topic-body-inner b { color: var(--text); }
+.concept-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: .6rem 0; }
+.tag { background: var(--phys-light); color: var(--phys); border: 1px solid var(--phys-border); border-radius: 99px; padding: 3px 11px; font-size: 12px; }
+.testtip { background: var(--earth-light); border: 1px solid var(--earth-border); border-radius: 8px; padding: .7rem .9rem; font-size: 13px; color: var(--earth); margin-top: .8rem; }
+.testtip b { color: var(--earth); }
+
+/* ── SAMPLE QUESTIONS ── */
+.qsection-title { font-family: 'Fraunces', serif; font-size: 1.4rem; text-align: center; margin: 2.5rem 0 .4rem; }
+.qsection-sub { text-align: center; font-size: 13.5px; color: var(--text2); margin-bottom: 1.5rem; }
+.qcard { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.4rem 1.4rem 1.2rem; margin-bottom: 1rem; }
+.qcard .qtag { font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; color: var(--phys); font-weight: 600; margin-bottom: 6px; }
+.qcard .qtext { font-size: 14.5px; font-weight: 500; margin-bottom: .8rem; }
+.choices { display: flex; flex-direction: column; gap: 6px; }
+.choice-btn {
+  text-align: left; background: var(--surface); border: 1px solid var(--border2); border-radius: 8px;
+  padding: 8px 12px; font-family: inherit; font-size: 13.5px; color: var(--text); cursor: pointer; transition: all .12s;
+}
+.choice-btn:hover:not(:disabled) { background: var(--surface2); }
+.choice-btn.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); font-weight: 600; }
+.choice-btn.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); font-weight: 600; }
+.choice-btn:disabled { cursor: default; }
+.feedback { display: none; margin-top: 10px; padding: 10px 13px; border-radius: 8px; font-size: 13px; line-height: 1.55; }
+.feedback.show { display: block; }
+.feedback.ok { background: var(--success-bg); color: var(--success-text); border: 1px solid var(--success-border); }
+.feedback.no { background: var(--danger-bg); color: var(--danger-text); border: 1px solid var(--danger-border); }
+
+footer { text-align: center; font-size: 11.5px; color: var(--text3); margin-top: 2.5rem; }
+@media (max-width: 520px) { .ptable { grid-template-columns: repeat(18, 30px); } }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div class="eyebrow">HiSET Science · Physical Science</div>
+    <h1>The periodic table is <em>just a very organized chart.</em></h1>
+    <p>You won't be asked to memorize it. You'll be handed a piece of it and asked to read it — the same skill as reading any table or graph on the test, just with element symbols instead of bar heights.</p>
+  </header>
+
+  <div class="table-card">
+    <h2>Periods 1–4, for reference</h2>
+    <p>Rows = periods. Columns = groups. Color = family. This is the same shape the real table uses, just cut off after element 36 (krypton) — everything below repeats the same pattern.</p>
+    <div class="ptable" id="ptable"></div>
+    <div class="legend">
+      <span><i style="background:#f7d2c4"></i>Alkali metals</span>
+      <span><i style="background:#f7e3b8"></i>Alkaline earth metals</span>
+      <span><i style="background:#c7d6ee"></i>Transition metals</span>
+      <span><i style="background:#d6e0e8"></i>Other metals</span>
+      <span><i style="background:#d9c9ee"></i>Metalloids</span>
+      <span><i style="background:#c9e8d0"></i>Other nonmetals</span>
+      <span><i style="background:#f5e28a"></i>Halogens</span>
+      <span><i style="background:#cbe4ee"></i>Noble gases</span>
+    </div>
+    <div class="table-note">Each box: top-left number = atomic number, center = symbol, bottom = atomic mass — exactly what you'll see on the real HiSET reference table.</div>
+  </div>
+
+  <div id="accordion"></div>
+
+  <div class="qsection-title">Try it: <em style="font-style:italic;color:var(--phys)">4 sample questions</em></div>
+  <div class="qsection-sub">Same phrasing style the real HiSET uses — answer using only the table above.</div>
+  <div id="qcontainer"></div>
+
+  <footer>HiSET Study Hub · Physical Science · works offline once downloaded</footer>
+</div>
+
+<script>
+const elements = [
+  {n:1,s:'H',m:'1.01',cat:'nonmetal',col:1,row:1},
+  {n:2,s:'He',m:'4.00',cat:'noble',col:18,row:1},
+  {n:3,s:'Li',m:'6.94',cat:'alkali',col:1,row:2},
+  {n:4,s:'Be',m:'9.01',cat:'alkearth',col:2,row:2},
+  {n:5,s:'B',m:'10.81',cat:'metalloid',col:13,row:2},
+  {n:6,s:'C',m:'12.01',cat:'nonmetal',col:14,row:2},
+  {n:7,s:'N',m:'14.01',cat:'nonmetal',col:15,row:2},
+  {n:8,s:'O',m:'16.00',cat:'nonmetal',col:16,row:2},
+  {n:9,s:'F',m:'19.00',cat:'halogen',col:17,row:2},
+  {n:10,s:'Ne',m:'20.18',cat:'noble',col:18,row:2},
+  {n:11,s:'Na',m:'22.99',cat:'alkali',col:1,row:3},
+  {n:12,s:'Mg',m:'24.31',cat:'alkearth',col:2,row:3},
+  {n:13,s:'Al',m:'26.98',cat:'posttrans',col:13,row:3},
+  {n:14,s:'Si',m:'28.09',cat:'metalloid',col:14,row:3},
+  {n:15,s:'P',m:'30.97',cat:'nonmetal',col:15,row:3},
+  {n:16,s:'S',m:'32.07',cat:'nonmetal',col:16,row:3},
+  {n:17,s:'Cl',m:'35.45',cat:'halogen',col:17,row:3},
+  {n:18,s:'Ar',m:'39.95',cat:'noble',col:18,row:3},
+  {n:19,s:'K',m:'39.10',cat:'alkali',col:1,row:4},
+  {n:20,s:'Ca',m:'40.08',cat:'alkearth',col:2,row:4},
+  {n:21,s:'Sc',m:'44.96',cat:'transition',col:3,row:4},
+  {n:22,s:'Ti',m:'47.87',cat:'transition',col:4,row:4},
+  {n:23,s:'V',m:'50.94',cat:'transition',col:5,row:4},
+  {n:24,s:'Cr',m:'52.00',cat:'transition',col:6,row:4},
+  {n:25,s:'Mn',m:'54.94',cat:'transition',col:7,row:4},
+  {n:26,s:'Fe',m:'55.85',cat:'transition',col:8,row:4},
+  {n:27,s:'Co',m:'58.93',cat:'transition',col:9,row:4},
+  {n:28,s:'Ni',m:'58.69',cat:'transition',col:10,row:4},
+  {n:29,s:'Cu',m:'63.55',cat:'transition',col:11,row:4},
+  {n:30,s:'Zn',m:'65.38',cat:'transition',col:12,row:4},
+  {n:31,s:'Ga',m:'69.72',cat:'posttrans',col:13,row:4},
+  {n:32,s:'Ge',m:'72.63',cat:'metalloid',col:14,row:4},
+  {n:33,s:'As',m:'74.92',cat:'metalloid',col:15,row:4},
+  {n:34,s:'Se',m:'78.97',cat:'nonmetal',col:16,row:4},
+  {n:35,s:'Br',m:'79.90',cat:'halogen',col:17,row:4},
+  {n:36,s:'Kr',m:'83.80',cat:'noble',col:18,row:4},
+];
+document.getElementById('ptable').innerHTML = elements.map(e=>
+  `<div class="el cat-${e.cat}" style="grid-column:${e.col};grid-row:${e.row}">
+     <span class="num">${e.n}</span>
+     <span class="sym">${e.s}</span>
+     <span class="mass">${e.m}</span>
+   </div>`).join('');
+
+const topics = [
+  {
+    title: "How the table is organized",
+    body: `<p><b>Rows (periods)</b> tell you how many electron shells an atom has — period 1 has one shell, period 4 has four. <b>Columns (groups)</b> tell you how the outermost shell is filled, which is why elements in the same column behave alike chemically. That's the single most useful fact on the whole table: <b>same column ≈ similar properties.</b></p>
+    <p>Left side and middle = metals. Far right (minus the last column) = nonmetals. The jagged staircase running between boron and astatine marks the <b>metalloids</b> — elements with some properties of each.</p>
+    <div class="concept-tags"><span class="tag">periods = rows</span><span class="tag">groups = columns</span><span class="tag">metals vs nonmetals</span><span class="tag">metalloid staircase</span></div>`
+  },
+  {
+    title: "Reading one element's box",
+    body: `<p>Every box on the real reference table gives you the same four things: the <b>element symbol</b>, its <b>name</b>, the <b>atomic number</b> (top, usually), and the <b>atomic mass</b> (a decimal, usually below the symbol).</p>
+    <p>Two facts unlock most of the math questions:</p>
+    <p><b>Atomic number = number of protons</b> — and in a neutral atom, protons = electrons, so the atomic number also tells you the electron count.</p>
+    <p><b>Neutrons ≈ atomic mass − atomic number</b> — round the mass to the nearest whole number first, then subtract.</p>
+    <div class="testtip"><b>Worked example:</b> Chlorine (Cl) has atomic number 17 and atomic mass 35.45. Protons = 17. Electrons (neutral atom) = 17. Neutrons ≈ 35 − 17 = 18.</div>`
+  },
+  {
+    title: "Families worth recognizing by name",
+    body: `<p>The HiSET doesn't expect memorized trivia, but it does expect you to recognize a family <b>when the table hands you the column</b>.</p>
+    <p><b>Alkali metals</b> (column 1, skip hydrogen) — soft, extremely reactive metals. <b>Alkaline earth metals</b> (column 2) — reactive, but less so than column 1. <b>Halogens</b> (column 17) — highly reactive nonmetals, often paired with alkali metals in compounds (like table salt: sodium + chlorine). <b>Noble gases</b> (column 18) — barely react with anything, which is exactly why they're used in light bulbs and balloons.</p>
+    <div class="concept-tags"><span class="tag">alkali metals</span><span class="tag">alkaline earth</span><span class="tag">halogens</span><span class="tag">noble gases</span></div>`
+  },
+  {
+    title: "How HiSET actually turns this into a question",
+    body: `<p>You'll almost never be asked "what is the periodic table." Instead, expect one of these shapes:</p>
+    <p><b>1. Lookup:</b> "Based on the table, how many protons/electrons/neutrons does an atom of ___ have?" — pure reading, use the two rules above.</p>
+    <p><b>2. Same-family reasoning:</b> "Element X is in the same group as sodium. Which property is X most likely to share with sodium?" — answer with the family behavior, not the specific element.</p>
+    <p><b>3. Category identification:</b> "Which element shown is a noble gas / metalloid / halogen?" — use position, not memorized facts.</p>
+    <p><b>4. Compound logic:</b> "Which two elements are most likely to form a compound similar to table salt?" — pairs a reactive metal (column 1 or 2) with a reactive nonmetal (column 16 or 17).</p>
+    <div class="testtip"><b>Test tip:</b> If a periodic-table question feels hard, it's almost always because you skipped identifying the column first. Find the column, then answer.</div>`
+  }
+];
+document.getElementById('accordion').innerHTML = topics.map((t,i)=>`
+  <div class="topic-block" data-i="${i}">
+    <div class="topic-header">
+      <span class="topic-title"><span class="topic-dot"></span>${t.title}</span>
+      <span class="chevron">▾</span>
+    </div>
+    <div class="topic-body"><div class="topic-body-inner">${t.body}</div></div>
+  </div>
+`).join('');
+document.querySelectorAll('.topic-block').forEach(el=>{
+  el.querySelector('.topic-header').addEventListener('click', ()=> el.classList.toggle('open'));
+});
+document.querySelector('.topic-block').classList.add('open');
+
+const questions = [
+  {tag:"Lookup", q:"Based on the table above, how many protons does an atom of oxygen (O) have?",
+   choices:["6","8","16","24"], correct:1,
+   explain:"Oxygen's atomic number is 8, shown at the top of its box. The atomic number always equals the number of protons."},
+  {tag:"Lookup — math", q:"Silicon (Si) has atomic number 14 and atomic mass 28.09. About how many neutrons does an atom of silicon have?",
+   choices:["8","14","28","42"], correct:1,
+   explain:"Round the mass to 28, then subtract the atomic number: 28 − 14 = 14 neutrons."},
+  {tag:"Same-family reasoning", q:"Potassium (K) is in the same column as sodium (Na) and lithium (Li). Based on that, potassium is most likely to be:",
+   choices:["A noble gas that barely reacts","A soft, highly reactive metal","A metalloid","A gas at room temperature"], correct:1,
+   explain:"Na, Li, and K are all alkali metals (column 1) — soft, low-density, and extremely reactive. Sharing a column means sharing that family behavior."},
+  {tag:"Category ID", q:"Which element in the table above is a halogen?",
+   choices:["Ne (neon)","Ca (calcium)","Cl (chlorine)","Fe (iron)"], correct:2,
+   explain:"Chlorine sits in column 17 — the halogen column. Neon is a noble gas (column 18), calcium is an alkaline earth metal (column 2), and iron is a transition metal."}
+];
+document.getElementById('qcontainer').innerHTML = questions.map((item,qi)=>`
+  <div class="qcard">
+    <div class="qtag">${item.tag}</div>
+    <div class="qtext">${qi+1}. ${item.q}</div>
+    <div class="choices" id="ch-${qi}">
+      ${item.choices.map((c,ci)=>`<button class="choice-btn" data-qi="${qi}" data-ci="${ci}">${c}</button>`).join('')}
+    </div>
+    <div class="feedback" id="fb-${qi}"></div>
+  </div>
+`).join('');
+document.querySelectorAll('.choice-btn').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    const qi = +e.currentTarget.dataset.qi, ci = +e.currentTarget.dataset.ci;
+    const item = questions[qi];
+    const wrap = document.getElementById(`ch-${qi}`);
+    [...wrap.children].forEach((b,i)=>{
+      b.disabled = true;
+      if(i===item.correct) b.classList.add('correct');
+      else if(i===ci) b.classList.add('wrong');
+    });
+    const fb = document.getElementById(`fb-${qi}`);
+    fb.className = 'feedback show ' + (ci===item.correct ? 'ok' : 'no');
+    fb.textContent = (ci===item.correct ? "Correct. " : "Not quite. ") + item.explain;
+  });
+});
+</script>
+</body>
+</html>
