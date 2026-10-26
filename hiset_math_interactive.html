@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HiSET Math: Explore and Practice</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #f2f2f9; --surface: #fbfbff; --surface2: #e6e7f4;
+  --border: #d3d5e8; --border2: #b9bcd8;
+  --text: #181a2e; --text2: #4a4d6a; --text3: #81849f;
+  --num: #3a3f9e; --num-light: #e8e9f7; --num-border: #a9adde;
+  --geo: #0f6e56; --geo-light: #e1f5ee; --geo-border: #8fd1bb;
+  --dat: #854f0b; --dat-light: #faeeda; --dat-border: #e6c28a;
+  --alg: #993c1d; --alg-light: #faece7; --alg-border: #ecb7a4;
+  --success-bg: #e6f2ec; --success-text: #1a5c3a; --success-border: #8ecfb0;
+  --danger-bg: #faeaea; --danger-text: #7a2020; --danger-border: #e8b0b0;
+  --radius: 10px; --radius-lg: 16px;
+}
+body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; line-height: 1.55; }
+.container { max-width: 800px; margin: 0 auto; }
+header { text-align: center; margin-bottom: 1.5rem; }
+.eyebrow { font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--num); margin-bottom: 10px; font-weight: 600; }
+header h1 { font-family: 'Fraunces', serif; font-size: clamp(1.8rem, 5.5vw, 2.7rem); font-weight: 400; line-height: 1.15; margin-bottom: 10px; }
+header h1 em { font-style: italic; color: var(--num); }
+header p { font-size: 14px; color: var(--text2); max-width: 540px; margin: 0 auto; }
+
+nav.jump { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 1.5rem 0 2rem; }
+nav.jump a { font-size: 13px; font-weight: 500; text-decoration: none; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border2); color: var(--text2); background: var(--surface); }
+nav.jump a:hover { border-color: var(--num); color: var(--num); }
+
+section.card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 1.5rem; margin-bottom: 1.5rem; }
+.tag { display: inline-block; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 600; padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
+.tag.num { background: var(--num-light); color: var(--num); }
+.tag.geo { background: var(--geo-light); color: var(--geo); }
+.tag.dat { background: var(--dat-light); color: var(--dat); }
+.tag.alg { background: var(--alg-light); color: var(--alg); }
+section.card h2 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 1.45rem; line-height: 1.2; margin-bottom: 6px; }
+section.card > p.lead { font-size: 14px; color: var(--text2); margin-bottom: 1rem; }
+
+.row { display: grid; grid-template-columns: 1fr; gap: 1.25rem; }
+@media (min-width: 680px) { .row { grid-template-columns: 1.15fr 1fr; align-items: start; } }
+.viz { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 8px; }
+.viz svg { width: 100%; height: auto; display: block; }
+.controls label { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin: 12px 0 4px; }
+.controls label span.val { font-family: 'DM Mono', monospace; color: var(--text2); }
+.controls input[type=range] { width: 100%; accent-color: var(--num); }
+.controls select { width: 100%; padding: 8px; border-radius: 8px; border: 1px solid var(--border2); font: inherit; background: #fff; }
+.readout { font-family: 'DM Mono', monospace; font-size: 15px; background: var(--surface2); border-radius: var(--radius); padding: 10px 12px; margin-top: 14px; line-height: 1.6; }
+.readout b { font-weight: 500; }
+.notice { margin-top: 14px; font-size: 13px; color: var(--text2); border-left: 3px solid var(--border2); padding-left: 10px; }
+.notice strong { color: var(--text); }
+.presets { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.presets button, .btn { font: inherit; font-size: 13px; font-weight: 500; padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border2); background: #fff; color: var(--text2); cursor: pointer; }
+.presets button:hover, .btn:hover { border-color: var(--num); color: var(--num); }
+.btn.primary { background: var(--num); border-color: var(--num); color: #fff; }
+.btn.primary:hover { background: #2d317f; color: #fff; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* quiz */
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin: 0.5rem 0 1rem; }
+.chip { font: inherit; font-size: 13px; font-weight: 500; padding: 6px 14px; border-radius: 999px; border: 1px solid var(--border2); background: #fff; color: var(--text2); cursor: pointer; }
+.chip[aria-pressed=true] { background: var(--num); border-color: var(--num); color: #fff; }
+.progress-wrap { display: flex; align-items: center; gap: 12px; margin: 0 0 1rem; }
+.progress-label { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--text3); white-space: nowrap; }
+.progress-track { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--num); width: 0; transition: width .3s; }
+.q-cat { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; font-weight: 600; margin-bottom: 6px; }
+.q-text { font-family: 'Fraunces', serif; font-size: 1.2rem; line-height: 1.35; margin-bottom: 14px; }
+.opts { display: grid; gap: 8px; }
+.opt { text-align: left; font: inherit; font-size: 15px; padding: 11px 14px; border-radius: var(--radius); border: 1px solid var(--border2); background: #fff; color: var(--text); cursor: pointer; display: flex; gap: 10px; }
+.opt .letter { font-family: 'DM Mono', monospace; color: var(--text3); }
+.opt:hover:not([disabled]) { border-color: var(--num); background: var(--num-light); }
+.opt.correct { background: var(--success-bg); border-color: var(--success-border); color: var(--success-text); }
+.opt.wrong { background: var(--danger-bg); border-color: var(--danger-border); color: var(--danger-text); }
+.opt[disabled] { cursor: default; }
+.hintbox, .explain { margin-top: 14px; font-size: 14px; border-radius: var(--radius); padding: 10px 14px; }
+.hintbox { background: var(--dat-light); color: var(--dat); }
+.explain { background: var(--surface2); color: var(--text); }
+.explain b.ok { color: var(--success-text); } .explain b.no { color: var(--danger-text); }
+.qactions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+.summary h3 { font-family: 'Fraunces', serif; font-weight: 400; font-size: 1.5rem; margin-bottom: 6px; }
+.bars { margin: 14px 0; display: grid; gap: 10px; }
+.bar-row { display: grid; grid-template-columns: 120px 1fr 44px; gap: 10px; align-items: center; font-size: 13px; }
+.bar-track { height: 10px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+.bar-fill { height: 100%; }
+footer { text-align: center; font-size: 12px; color: var(--text3); margin-top: 2rem; }
+.sr { position: absolute; left: -9999px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">HiSET Mathematics</div>
+  <h1>See the math, then <em>try the math</em></h1>
+  <p>Four interactive explainers and a 12-question practice set covering all four HiSET math content areas. Move the sliders and watch what changes.</p>
+</header>
+
+<nav class="jump" aria-label="Jump to a section">
+  <a href="#lines">Lines and slope</a>
+  <a href="#pythag">Pythagorean theorem</a>
+  <a href="#fdp">Fractions, decimals, percents</a>
+  <a href="#stats">Mean, median, mode</a>
+  <a href="#quiz">Practice quiz</a>
+</nav>
+
+<!-- LINES -->
+<section class="card" id="lines" aria-labelledby="lines-h">
+  <span class="tag alg">Algebraic concepts</span>
+  <h2 id="lines-h">Lines and slope: y = mx + b</h2>
+  <p class="lead">Slope tells you how steep the line is. The y-intercept tells you where it crosses the y-axis.</p>
+  <div class="row">
+    <div class="viz"><svg id="lineSvg" viewBox="0 0 320 320" role="img" aria-label="Graph of a line y = mx + b"></svg></div>
+    <div class="controls">
+      <label for="m">Slope (m) <span class="val" id="mv"></span></label>
+      <input type="range" id="m" min="-5" max="5" step="0.5" value="2">
+      <label for="b">Y-intercept (b) <span class="val" id="bv"></span></label>
+      <input type="range" id="b" min="-8" max="8" step="1" value="1">
+      <div class="readout" id="lineOut"></div>
+      <div class="presets">
+        <button type="button" data-m="2" data-b="1">y = 2x + 1</button>
+        <button type="button" data-m="-1" data-b="4">y = -x + 4</button>
+        <button type="button" data-m="0" data-b="-3">flat line</button>
+        <button type="button" data-m="0.5" data-b="0">gentle slope</button>
+      </div>
+    </div>
+  </div>
+  <p class="notice"><strong>What to notice:</strong> A positive slope rises left to right and a negative slope falls. Slope 0 is a flat line. Changing b slides the whole line up or down without changing its steepness.</p>
+</section>
+
+<!-- PYTHAG -->
+<section class="card" id="pythag" aria-labelledby="py-h">
+  <span class="tag geo">Measurement and geometry</span>
+  <h2 id="py-h">The Pythagorean theorem</h2>
+  <p class="lead">In a right triangle, the squares on the two legs add up to the square on the hypotenuse: a&sup2; + b&sup2; = c&sup2;.</p>
+  <div class="row">
+    <div class="viz"><svg id="pySvg" viewBox="0 0 320 320" role="img" aria-label="Right triangle with squares drawn on each side"></svg></div>
+    <div class="controls">
+      <label for="pa">Leg a <span class="val" id="pav"></span></label>
+      <input type="range" id="pa" min="1" max="12" step="1" value="3" style="accent-color:var(--geo)">
+      <label for="pb">Leg b <span class="val" id="pbv"></span></label>
+      <input type="range" id="pb" min="1" max="12" step="1" value="4" style="accent-color:var(--geo)">
+      <div class="readout" id="pyOut"></div>
+      <div class="presets">
+        <button type="button" data-a="3" data-b="4">3, 4, 5</button>
+        <button type="button" data-a="5" data-b="12">5, 12, 13</button>
+        <button type="button" data-a="8" data-b="6">6, 8, 10</button>
+        <button type="button" data-a="2" data-b="2">not a whole number</button>
+      </div>
+    </div>
+  </div>
+  <p class="notice"><strong>What to notice:</strong> The two small squares always cover exactly the same area as the big one. Whole-number sets like 3-4-5 and 5-12-13 show up on tests often, and multiples of them (6-8-10) work too.</p>
+</section>
+
+<!-- FDP -->
+<section class="card" id="fdp" aria-labelledby="fdp-h">
+  <span class="tag num">Numbers and operations</span>
+  <h2 id="fdp-h">Fractions, decimals, and percents</h2>
+  <p class="lead">They are three names for the same amount. Pick a fraction and see all three.</p>
+  <div class="row">
+    <div class="viz"><svg id="fdpSvg" viewBox="0 0 320 150" role="img" aria-label="Bar model of a fraction"></svg></div>
+    <div class="controls">
+      <label for="den">Parts in the whole (denominator)</label>
+      <select id="den">
+        <option>2</option><option>3</option><option>4</option><option selected>5</option><option>8</option><option>10</option><option>20</option>
+      </select>
+      <label for="numr">Parts shaded (numerator) <span class="val" id="numv"></span></label>
+      <input type="range" id="numr" min="0" max="5" step="1" value="3">
+      <div class="readout" id="fdpOut"></div>
+    </div>
+  </div>
+  <p class="notice"><strong>What to notice:</strong> Percent is just "out of 100." To change a fraction to a percent, divide the top by the bottom and multiply by 100. Memorize the friendly ones: 1/2 = 50%, 1/4 = 25%, 1/5 = 20%, 1/8 = 12.5%.</p>
+</section>
+
+<!-- STATS -->
+<section class="card" id="stats" aria-labelledby="st-h">
+  <span class="tag dat">Data analysis, probability, and statistics</span>
+  <h2 id="st-h">Mean, median, mode, and range</h2>
+  <p class="lead">Change any of the five values and watch the measures move. The median is always the middle of the <em>ordered</em> list.</p>
+  <div class="row">
+    <div class="viz"><svg id="stSvg" viewBox="0 0 320 220" role="img" aria-label="Dot plot of five values with mean and median marked"></svg></div>
+    <div class="controls" id="stCtl"></div>
+  </div>
+  <div class="readout" id="stOut"></div>
+  <p class="notice"><strong>What to notice:</strong> Try pushing one value far to the right. The mean follows it, but the median barely moves. That is why a few very large values pull an average up.</p>
+</section>
+
+<!-- QUIZ -->
+<section class="card" id="quiz" aria-labelledby="q-h">
+  <span class="tag num">Practice</span>
+  <h2 id="q-h">Practice quiz</h2>
+  <p class="lead">Twelve questions, three from each content area. Choose a topic or take them all.</p>
+  <div class="chips" role="group" aria-label="Choose a topic">
+    <button class="chip" aria-pressed="true" data-cat="all">All topics</button>
+    <button class="chip" aria-pressed="false" data-cat="num">Numbers</button>
+    <button class="chip" aria-pressed="false" data-cat="geo">Geometry</button>
+    <button class="chip" aria-pressed="false" data-cat="dat">Data and probability</button>
+    <button class="chip" aria-pressed="false" data-cat="alg">Algebra</button>
+  </div>
+  <div id="quizBody"></div>
+</section>
+
+<footer>Practice materials for HiSET Mathematics. Check the current HiSET Test at a Glance for official test details.</footer>
+</div>
+
+<script>
+const NS = 'http://www.w3.org/2000/svg';
+function el(tag, attrs, parent, text) {
+  const e = document.createElementNS(NS, tag);
+  for (const k in attrs) e.setAttribute(k, attrs[k]);
+  if (text !== undefined) e.textContent = text;
+  if (parent) parent.appendChild(e);
+  return e;
+}
+function clear(n) { while (n.firstChild) n.removeChild(n.firstChild); }
+function fmt(x, d) { return String(parseFloat(x.toFixed(d === undefined ? 2 : d))); }
+
+/* ---------- LINES ---------- */
+(function () {
+  const svg = document.getElementById('lineSvg');
+  const m = document.getElementById('m'), b = document.getElementById('b');
+  const S = 16, O = 160; // 20 units across 320px
+  function X(x) { return O + x * S; }
+  function Y(y) { return O - y * S; }
+  function draw() {
+    const mv = parseFloat(m.value), bv = parseFloat(b.value);
+    document.getElementById('mv').textContent = fmt(mv, 1);
+    document.getElementById('bv').textContent = bv;
+    clear(svg);
+    for (let i = -10; i <= 10; i++) {
+      el('line', { x1: X(i), y1: 0, x2: X(i), y2: 320, stroke: '#e3e4f0', 'stroke-width': 1 }, svg);
+      el('line', { x1: 0, y1: Y(i), x2: 320, y2: Y(i), stroke: '#e3e4f0', 'stroke-width': 1 }, svg);
+    }
+    el('line', { x1: 0, y1: O, x2: 320, y2: O, stroke: '#181a2e', 'stroke-width': 1.5 }, svg);
+    el('line', { x1: O, y1: 0, x2: O, y2: 320, stroke: '#181a2e', 'stroke-width': 1.5 }, svg);
+    el('text', { x: 308, y: O - 6, 'font-size': 11, fill: '#4a4d6a' }, svg, 'x');
+    el('text', { x: O + 6, y: 12, 'font-size': 11, fill: '#4a4d6a' }, svg, 'y');
+    [-8, -4, 4, 8].forEach(function (v) {
+      el('text', { x: X(v), y: O + 13, 'font-size': 9, fill: '#81849f', 'text-anchor': 'middle' }, svg, v);
+      el('text', { x: O - 5, y: Y(v) + 3, 'font-size': 9, fill: '#81849f', 'text-anchor': 'end' }, svg, v);
+    });
+    // line clipped to x in [-10, 10], y in [-10, 10]
+    const pts = [];
+    [-10, 10].forEach(function (x) { pts.push([x, mv * x + bv]); });
+    if (mv !== 0) { [-10, 10].forEach(function (y) { const x = (y - bv) / mv; if (x >= -10 && x <= 10) pts.push([x, y]); }); }
+    const inb = pts.filter(function (p) { return p[1] >= -10 && p[1] <= 10; }).sort(function (a, c) { return a[0] - c[0]; });
+    if (inb.length >= 2) {
+      const a = inb[0], z = inb[inb.length - 1];
+      el('line', { x1: X(a[0]), y1: Y(a[1]), x2: X(z[0]), y2: Y(z[1]), stroke: '#d85a30', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
+    }
+    // rise/run triangle from (0,b) to (1,b) to (1,b+m)
+    if (bv >= -10 && bv <= 10 && bv + mv >= -10 && bv + mv <= 10 && mv !== 0) {
+      el('polyline', { points: X(0) + ',' + Y(bv) + ' ' + X(1) + ',' + Y(bv) + ' ' + X(1) + ',' + Y(bv + mv), fill: 'none', stroke: '#3a3f9e', 'stroke-width': 2.2 }, svg);
+      el('text', { x: X(0.6), y: Y(bv) + (mv > 0 ? 14 : -6), 'font-size': 10, 'font-weight': 600, fill: '#3a3f9e', 'text-anchor': 'start' }, svg, 'run 1');
+      el('text', { x: X(1) + 5, y: Y(bv + mv / 2) + 3, 'font-size': 10, 'font-weight': 600, fill: '#3a3f9e' }, svg, 'rise ' + fmt(mv, 1));
+    }
+    if (bv >= -10 && bv <= 10) el('circle', { cx: X(0), cy: Y(bv), r: 4.5, fill: '#d85a30' }, svg);
+    let eq = 'y = ';
+    if (mv === 0) eq += bv;
+    else {
+      eq += (mv === 1 ? '' : mv === -1 ? '-' : fmt(mv, 1)) + 'x';
+      if (bv > 0) eq += ' + ' + bv; else if (bv < 0) eq += ' - ' + Math.abs(bv);
+    }
+    const dir = mv > 0 ? 'rises to the right' : mv < 0 ? 'falls to the right' : 'is flat';
+    document.getElementById('lineOut').innerHTML = '<b>' + eq + '</b><br>slope = ' + fmt(mv, 1) + ' (line ' + dir + ')<br>crosses y-axis at (0, ' + bv + ')';
+  }
+  m.addEventListener('input', draw); b.addEventListener('input', draw);
+  document.querySelectorAll('#lines .presets button').forEach(function (btn) {
+    btn.addEventListener('click', function () { m.value = btn.dataset.m; b.value = btn.dataset.b; draw(); });
+  });
+  draw();
+})();
+
+/* ---------- PYTHAGOREAN ---------- */
+(function () {
+  const svg = document.getElementById('pySvg');
+  const A = document.getElementById('pa'), B = document.getElementById('pb');
+  function draw() {
+    const a = parseInt(A.value, 10), b = parseInt(B.value, 10);
+    const c = Math.sqrt(a * a + b * b);
+    document.getElementById('pav').textContent = a;
+    document.getElementById('pbv').textContent = b;
+    clear(svg);
+    // everything spans x from -a to a+b and y from -(a+b) to b (in unit lengths): fit it to the frame
+    const s = Math.min(290 / (2 * a + b), 290 / (a + 2 * b));
+    // right angle at P; leg b horizontal (to the right), leg a vertical (up)
+    const P = { x: 15 + a * s + (290 - (2 * a + b) * s) / 2, y: 15 + (a + b) * s + (290 - (a + 2 * b) * s) / 2 };
+    const Pb = { x: P.x + b * s, y: P.y };       // end of leg b
+    const Pa = { x: P.x, y: P.y - a * s };       // end of leg a
+    // squares: on b (below), on a (left), on c (up-right of hypotenuse)
+    el('rect', { x: P.x, y: P.y, width: b * s, height: b * s, fill: '#e1f5ee', stroke: '#0f6e56', 'stroke-width': 1.2 }, svg);
+    el('rect', { x: P.x - a * s, y: Pa.y, width: a * s, height: a * s, fill: '#faeeda', stroke: '#854f0b', 'stroke-width': 1.2 }, svg);
+    const dx = Pb.x - Pa.x, dy = Pb.y - Pa.y;      // hypotenuse vector (Pa -> Pb)
+    const nx = dy / (c * s), ny = -dx / (c * s);    // unit outward normal (up-right)
+    const q = [[Pa.x, Pa.y], [Pb.x, Pb.y], [Pb.x + nx * c * s, Pb.y + ny * c * s], [Pa.x + nx * c * s, Pa.y + ny * c * s]];
+    el('polygon', { points: q.map(function (p) { return p.join(','); }).join(' '), fill: '#fdece6', stroke: '#d85a30', 'stroke-width': 1.2 }, svg);
+    el('polygon', { points: P.x + ',' + P.y + ' ' + Pb.x + ',' + Pb.y + ' ' + Pa.x + ',' + Pa.y, fill: '#fff', stroke: '#181a2e', 'stroke-width': 2 }, svg);
+    el('rect', { x: P.x, y: P.y - 9, width: 9, height: 9, fill: 'none', stroke: '#181a2e', 'stroke-width': 1 }, svg);
+    if (b * s >= 40) el('text', { x: P.x + (b * s) / 2, y: P.y + (b * s) / 2 + 4, 'font-size': 12, 'text-anchor': 'middle', fill: '#0f6e56', 'font-weight': 600 }, svg, 'b² = ' + (b * b));
+    if (a * s >= 40) el('text', { x: P.x - (a * s) / 2, y: Pa.y + (a * s) / 2 + 4, 'font-size': 12, 'text-anchor': 'middle', fill: '#854f0b', 'font-weight': 600 }, svg, 'a² = ' + (a * a));
+    const cx = (q[0][0] + q[2][0]) / 2, cy = (q[0][1] + q[2][1]) / 2;
+    el('text', { x: cx, y: cy + 4, 'font-size': 12, 'text-anchor': 'middle', fill: '#993c1d', 'font-weight': 600 }, svg, 'c² = ' + (a * a + b * b));
+    const whole = Math.abs(c - Math.round(c)) < 1e-9;
+    document.getElementById('pyOut').innerHTML =
+      a + '² + ' + b + '² = ' + (a * a) + ' + ' + (b * b) + ' = <b>' + (a * a + b * b) + '</b><br>c = √' + (a * a + b * b) + ' = <b>' + (whole ? Math.round(c) : fmt(c, 2) + ' (about)') + '</b>' +
+      (whole ? '<br>A whole-number triple!' : '<br>Not a whole number.');
+  }
+  A.addEventListener('input', draw); B.addEventListener('input', draw);
+  document.querySelectorAll('#pythag .presets button').forEach(function (btn) {
+    btn.addEventListener('click', function () { A.value = btn.dataset.a; B.value = btn.dataset.b; draw(); });
+  });
+  draw();
+})();
+
+/* ---------- FRACTION / DECIMAL / PERCENT ---------- */
+(function () {
+  const svg = document.getElementById('fdpSvg');
+  const den = document.getElementById('den'), num = document.getElementById('numr');
+  function draw() {
+    const d = parseInt(den.value, 10);
+    num.max = d;
+    if (parseInt(num.value, 10) > d) num.value = d;
+    const n = parseInt(num.value, 10);
+    document.getElementById('numv').textContent = n;
+    clear(svg);
+    const w = 300 / d;
+    for (let i = 0; i < d; i++) {
+      el('rect', { x: 10 + i * w, y: 30, width: w, height: 54, fill: i < n ? '#3a3f9e' : '#ffffff', stroke: '#181a2e', 'stroke-width': 1 }, svg);
+    }
+    // 100-square strip showing percent
+    const pct = (n / d) * 100;
+    el('text', { x: 10, y: 20, 'font-size': 11, fill: '#4a4d6a' }, svg, n + ' out of ' + d + ' parts');
+    el('rect', { x: 10, y: 104, width: 300, height: 14, fill: '#ffffff', stroke: '#181a2e', 'stroke-width': 1 }, svg);
+    el('rect', { x: 10, y: 104, width: 3 * pct, height: 14, fill: '#d85a30' }, svg);
+    el('text', { x: 10, y: 138, 'font-size': 11, fill: '#4a4d6a' }, svg, '0%');
+    el('text', { x: 310, y: 138, 'font-size': 11, fill: '#4a4d6a', 'text-anchor': 'end' }, svg, '100%');
+    el('text', { x: 160, y: 138, 'font-size': 11, fill: '#d85a30', 'font-weight': 600, 'text-anchor': 'middle' }, svg, fmt(pct, 1) + '%');
+    const dec = n / d;
+    document.getElementById('fdpOut').innerHTML = 'fraction: <b>' + n + '/' + d + '</b><br>decimal: <b>' + fmt(dec, 3) + (Number.isInteger(dec * 1000) ? '' : '...') + '</b><br>percent: <b>' + fmt(pct, 1) + '%</b>';
+  }
+  den.addEventListener('change', draw); num.addEventListener('input', draw);
+  draw();
+})();
+
+/* ---------- STATS ---------- */
+(function () {
+  const svg = document.getElementById('stSvg');
+  const ctl = document.getElementById('stCtl');
+  const vals = [4, 7, 7, 9, 13];
+  const inputs = [];
+  vals.forEach(function (v, i) {
+    const lab = document.createElement('label');
+    lab.setAttribute('for', 'sv' + i);
+    lab.innerHTML = 'Value ' + (i + 1) + ' <span class="val" id="svv' + i + '"></span>';
+    const inp = document.createElement('input');
+    inp.type = 'range'; inp.min = 0; inp.max = 20; inp.step = 1; inp.value = v; inp.id = 'sv' + i;
+    inp.style.accentColor = '#854f0b';
+    inp.addEventListener('input', draw);
+    ctl.appendChild(lab); ctl.appendChild(inp);
+    inputs.push(inp);
+  });
+  function draw() {
+    const data = inputs.map(function (i) { return parseInt(i.value, 10); });
+    data.forEach(function (v, i) { document.getElementById('svv' + i).textContent = v; });
+    const sorted = data.slice().sort(function (a, b) { return a - b; });
+    const sum = sorted.reduce(function (a, b) { return a + b; }, 0);
+    const mean = sum / sorted.length;
+    const median = sorted[2];
+    const counts = {};
+    sorted.forEach(function (v) { counts[v] = (counts[v] || 0) + 1; });
+    let maxc = 0; Object.keys(counts).forEach(function (k) { if (counts[k] > maxc) maxc = counts[k]; });
+    const modes = Object.keys(counts).filter(function (k) { return counts[k] === maxc; }).map(Number);
+    const modeTxt = maxc === 1 ? 'none (no repeats)' : modes.join(', ');
+    const range = sorted[4] - sorted[0];
+    clear(svg);
+    const x0 = 20, sc = 280 / 20, ax = 150;
+    function X(v) { return x0 + v * sc; }
+    el('line', { x1: X(0), y1: ax, x2: X(20), y2: ax, stroke: '#181a2e', 'stroke-width': 1.5 }, svg);
+    for (let v = 0; v <= 20; v++) {
+      el('line', { x1: X(v), y1: ax - 4, x2: X(v), y2: ax + 4, stroke: '#181a2e', 'stroke-width': 1 }, svg);
+      if (v % 5 === 0) el('text', { x: X(v), y: ax + 18, 'font-size': 10, fill: '#4a4d6a', 'text-anchor': 'middle' }, svg, v);
+    }
+    const stack = {};
+    sorted.forEach(function (v) {
+      stack[v] = (stack[v] || 0) + 1;
+      el('circle', { cx: X(v), cy: ax - 4 - 8 - (stack[v] - 1) * 17, r: 7.5, fill: '#ef9f27', stroke: '#854f0b', 'stroke-width': 1 }, svg);
+    });
+    el('line', { x1: X(median), y1: 30, x2: X(median), y2: ax, stroke: '#3a3f9e', 'stroke-width': 1.5, 'stroke-dasharray': '4 3' }, svg);
+    el('text', { x: X(median), y: 22, 'font-size': 11, 'font-weight': 600, fill: '#3a3f9e', 'text-anchor': 'middle' }, svg, 'median ' + median);
+    el('polygon', { points: X(mean) + ',' + (ax + 24) + ' ' + (X(mean) - 6) + ',' + (ax + 36) + ' ' + (X(mean) + 6) + ',' + (ax + 36), fill: '#d85a30' }, svg);
+    el('text', { x: X(mean), y: ax + 50, 'font-size': 11, 'font-weight': 600, fill: '#993c1d', 'text-anchor': 'middle' }, svg, 'mean ' + fmt(mean, 1));
+    document.getElementById('stOut').innerHTML =
+      'ordered: <b>' + sorted.join(', ') + '</b><br>mean = ' + sum + ' / 5 = <b>' + fmt(mean, 1) + '</b> &nbsp; median = middle value = <b>' + median + '</b><br>mode = <b>' + modeTxt + '</b> &nbsp; range = ' + sorted[4] + ' - ' + sorted[0] + ' = <b>' + range + '</b>';
+  }
+  draw();
+})();
+
+/* ---------- QUIZ ---------- */
+const CATS = {
+  num: { name: 'Numbers and operations', color: '#3a3f9e' },
+  geo: { name: 'Measurement and geometry', color: '#0f6e56' },
+  dat: { name: 'Data and probability', color: '#854f0b' },
+  alg: { name: 'Algebraic concepts', color: '#993c1d' }
+};
+const QUESTIONS = [
+  { cat: 'num', q: 'A coat that regularly costs $120 is on sale for 30% off. What is the sale price?', opts: ['$36', '$84', '$90', '$96'], a: 1,
+    hint: 'Find 30% of 120 first, then subtract it. Or pay 70% of the price.',
+    ex: '30% of 120 is 0.30 × 120 = 36. The sale price is 120 − 36 = $84. The $36 is the amount saved, not the price.' },
+  { cat: 'num', q: 'The ratio of boys to girls in a class is 3 to 5. There are 40 students. How many are girls?', opts: ['15', '20', '24', '25'], a: 3,
+    hint: 'Add the ratio parts to find how many equal groups the class splits into.',
+    ex: '3 + 5 = 8 parts. 40 ÷ 8 = 5 students per part. Girls are 5 parts: 5 × 5 = 25. (15 is the number of boys.)' },
+  { cat: 'num', q: 'The price of a ticket rose from $50 to $65. What was the percent increase?', opts: ['15%', '23%', '30%', '65%'], a: 2,
+    hint: 'Percent change = change ÷ original amount.',
+    ex: 'The change is 65 − 50 = 15. Divide by the original: 15 ÷ 50 = 0.30 = 30%. Dividing by the new price (15 ÷ 65) gives about 23%, a common mistake.' },
+  { cat: 'geo', q: 'The legs of a right triangle measure 5 inches and 12 inches. What is the length of the hypotenuse?', opts: ['13 inches', '15 inches', '17 inches', '60 inches'], a: 0,
+    hint: 'Use a² + b² = c². Do you recognize this triple?',
+    ex: '5² + 12² = 25 + 144 = 169, and √169 = 13. This is the 5-12-13 triple. Adding the legs (17) is a common error.' },
+  { cat: 'geo', q: 'A circle has a diameter of 10 cm. Using 3.14 for π, what is its area?', opts: ['31.4 sq cm', '78.5 sq cm', '157 sq cm', '314 sq cm'], a: 1,
+    hint: 'Area uses the radius, and the radius is half the diameter.',
+    ex: 'r = 5, so A = πr² = 3.14 × 25 = 78.5 sq cm. 31.4 is the circumference, and 314 comes from squaring the diameter by mistake.' },
+  { cat: 'geo', q: 'A room is 12 feet by 15 feet. Carpet is sold by the square yard. How many square yards are needed to cover the floor?', opts: ['5', '20', '60', '180'], a: 1,
+    hint: 'Find the area in square feet. How many square feet are in one square yard?',
+    ex: '12 × 15 = 180 square feet. One square yard is 3 ft × 3 ft = 9 square feet, so 180 ÷ 9 = 20 square yards.' },
+  { cat: 'dat', q: 'Six students scored 12, 5, 9, 3, 7, and 15 on a quiz. What is the median score?', opts: ['7', '8', '8.5', '9'], a: 1,
+    hint: 'Put the scores in order first. With an even count, average the two middle values.',
+    ex: 'Ordered: 3, 5, 7, 9, 12, 15. The middle two are 7 and 9, and (7 + 9) ÷ 2 = 8. The mean is 51 ÷ 6 = 8.5, which is a different measure.' },
+  { cat: 'dat', q: 'A bag holds 4 red, 6 blue, and 5 green marbles. One marble is drawn at random. What is the probability that it is red or green?', opts: ['1/3', '3/5', '2/5', '9/10'], a: 1,
+    hint: 'Count the favorable marbles and divide by the total number of marbles.',
+    ex: 'Red or green is 4 + 5 = 9 out of 15 total. 9/15 simplifies to 3/5. Another way: 1 − P(blue) = 1 − 6/15 = 9/15.' },
+  { cat: 'dat', q: 'A diner offers 3 sandwiches, 4 sides, and 2 drinks. How many different meals with one of each can be ordered?', opts: ['9', '12', '18', '24'], a: 3,
+    hint: 'When choices are made one after another, multiply the number of options.',
+    ex: 'By the counting principle: 3 × 4 × 2 = 24 meals. Adding (3 + 4 + 2 = 9) is a common mistake.' },
+  { cat: 'alg', q: 'Solve for x:  4x − 7 = 21', opts: ['x = 3.5', 'x = 7', 'x = 14', 'x = 28'], a: 1,
+    hint: 'Undo the subtraction first, then undo the multiplication.',
+    ex: 'Add 7 to both sides: 4x = 28. Divide by 4: x = 7. Check: 4(7) − 7 = 21. ✓' },
+  { cat: 'alg', q: 'Solve the inequality:  −2x > 10', opts: ['x > −5', 'x < −5', 'x > 5', 'x < 5'], a: 1,
+    hint: 'Dividing by a negative number changes something about the inequality sign.',
+    ex: 'Divide both sides by −2 and flip the sign: x < −5. Test it: x = −6 gives −2(−6) = 12, which is greater than 10. ✓' },
+  { cat: 'alg', q: 'What is the slope of the line that passes through (1, 2) and (3, 8)?', opts: ['1/3', '3', '4', '6'], a: 1,
+    hint: 'Slope = change in y ÷ change in x. Keep the points in the same order in top and bottom.',
+    ex: '(8 − 2) ÷ (3 − 1) = 6 ÷ 2 = 3. The slope is 3, so y rises 3 for every 1 unit to the right.' }
+];
+
+(function () {
+  const body = document.getElementById('quizBody');
+  const chips = document.querySelectorAll('.chip');
+  let pool = [], idx = 0, answers = [], current = 'all';
+
+  function setPool(cat) {
+    current = cat;
+    pool = QUESTIONS.filter(function (q) { return cat === 'all' || q.cat === cat; });
+    idx = 0; answers = new Array(pool.length).fill(null);
+    chips.forEach(function (c) { c.setAttribute('aria-pressed', c.dataset.cat === cat ? 'true' : 'false'); });
+    render();
+  }
+  chips.forEach(function (c) { c.addEventListener('click', function () { setPool(c.dataset.cat); }); });
+
+  function render() {
+    if (idx >= pool.length) return summary();
+    const q = pool[idx], cat = CATS[q.cat];
+    const picked = answers[idx];
+    const done = picked !== null;
+    let h = '<div class="progress-wrap"><span class="progress-label">' + (idx + 1) + ' / ' + pool.length + '</span><div class="progress-track"><div class="progress-fill" style="width:' + (idx / pool.length * 100) + '%"></div></div></div>';
+    h += '<div class="q-cat" style="color:' + cat.color + '">' + cat.name + '</div>';
+    h += '<div class="q-text">' + q.q + '</div><div class="opts" role="group" aria-label="Answer choices">';
+    q.opts.forEach(function (o, i) {
+      let cls = 'opt';
+      if (done) { if (i === q.a) cls += ' correct'; else if (i === picked) cls += ' wrong'; }
+      h += '<button class="' + cls + '" data-i="' + i + '"' + (done ? ' disabled' : '') + '><span class="letter">' + 'ABCD'[i] + '</span><span>' + o + '</span></button>';
+    });
+    h += '</div><div id="fb" aria-live="polite">';
+    if (done) h += feedback(q, picked);
+    h += '</div><div class="qactions">';
+    if (!done) h += '<button class="btn" id="hintBtn">Show hint</button>';
+    if (done) h += '<button class="btn primary" id="nextBtn">' + (idx === pool.length - 1 ? 'See results' : 'Next question') + '</button>';
+    h += '</div>';
+    body.innerHTML = h;
+    body.querySelectorAll('.opt').forEach(function (b) {
+      b.addEventListener('click', function () { answers[idx] = parseInt(b.dataset.i, 10); render(); });
+    });
+    const hb = document.getElementById('hintBtn');
+    if (hb) hb.addEventListener('click', function () {
+      document.getElementById('fb').innerHTML = '<div class="hintbox"><b>Hint:</b> ' + q.hint + '</div>';
+      hb.disabled = true;
+    });
+    const nb = document.getElementById('nextBtn');
+    if (nb) nb.addEventListener('click', function () { idx++; render(); });
+  }
+  function feedback(q, picked) {
+    const ok = picked === q.a;
+    return '<div class="explain"><b class="' + (ok ? 'ok' : 'no') + '">' + (ok ? 'Correct.' : 'Not quite. The answer is ' + 'ABCD'[q.a] + ': ' + q.opts[q.a] + '.') + '</b> ' + q.ex + '</div>';
+  }
+  function summary() {
+    let score = 0; const by = {};
+    pool.forEach(function (q, i) {
+      by[q.cat] = by[q.cat] || { r: 0, t: 0 };
+      by[q.cat].t++;
+      if (answers[i] === q.a) { score++; by[q.cat].r++; }
+    });
+    const pct = Math.round(score / pool.length * 100);
+    let h = '<div class="summary"><h3>You got ' + score + ' of ' + pool.length + ' (' + pct + '%)</h3>';
+    h += '<p>' + (pct >= 80 ? 'Strong work. Try a different topic or a timed practice test next.' : pct >= 50 ? 'Good progress. Review the explainers above for the topics you missed.' : 'This is a useful starting point. Work through the explainers above, then try again.') + '</p><div class="bars">';
+    Object.keys(by).forEach(function (k) {
+      const p = Math.round(by[k].r / by[k].t * 100);
+      h += '<div class="bar-row"><span>' + CATS[k].name.split(' and ')[0] + '</span><div class="bar-track"><div class="bar-fill" style="width:' + p + '%;background:' + CATS[k].color + '"></div></div><span>' + by[k].r + '/' + by[k].t + '</span></div>';
+    });
+    h += '</div><div class="qactions"><button class="btn primary" id="retryAll">Start over</button>';
+    const missed = pool.filter(function (q, i) { return answers[i] !== q.a; });
+    if (missed.length) h += '<button class="btn" id="retryMissed">Retry the ' + missed.length + ' I missed</button>';
+    h += '</div></div>';
+    body.innerHTML = h;
+    document.getElementById('retryAll').addEventListener('click', function () { setPool(current); });
+    const rm = document.getElementById('retryMissed');
+    if (rm) rm.addEventListener('click', function () {
+      pool = missed; idx = 0; answers = new Array(pool.length).fill(null); render();
+    });
+  }
+  setPool('all');
+})();
+</script>
+</body>
+</html>
